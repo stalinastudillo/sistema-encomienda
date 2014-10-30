@@ -658,6 +658,11 @@ public class ClienteController {
  		bEliminar.setDisable(true);
 	}
 	
+	@FXML
+	private void actionBotonConsultarFactura() throws Exception{
+		System.out.println(" consultar facturas de ");
+	} 
+	
 	private Session openSesion(){
 		
 		Session sesion = Main.sesionFactory.getCurrentSession();

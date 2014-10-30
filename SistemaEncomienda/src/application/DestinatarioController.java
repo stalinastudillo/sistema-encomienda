@@ -97,28 +97,41 @@ public class DestinatarioController {
     
 	@FXML
 	private void initialize(){
+		System.out.println("destinatario controlador");
+		tfApellidoC.setText("");tfCorreoC.setText("");tfDireccionC.setText("");
+		tfNombreC.setText("");tfRIFCedulaC.setText("");	tfTelefonoC.setText("");
 		
-		if (ContextoEncomienda.getInstance().getDestinatario().getNombre()!=null){			
+		if ( (ContextoEncomienda.getInstance().getBanderaNuevaFactura()) || (ContextoEncomienda.getInstance().getBanderaConsultaFactura()) ){			
 			
-			if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("nv")==0){
-				cbRIFCedulaC.getSelectionModel().select(0);	
-				tfRIFCedulaC.setText("V-");
-			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("ne")==0){
-				cbRIFCedulaC.getSelectionModel().select(0);
-				tfRIFCedulaC.setText("E-");
-			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jj")==0){
-				cbRIFCedulaC.getSelectionModel().select(1);
-				tfRIFCedulaC.setText("J-");
-			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jg")==0){
-				cbRIFCedulaC.getSelectionModel().select(1);
-				tfRIFCedulaC.setText("G-");
-			}			
-			tfRIFCedulaC.setText(tfRIFCedulaC.getText()+String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getRifCedula()));
-			tfNombreC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getNombre()));
-			tfApellidoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getApellido()));
-			tfTelefonoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getTelefono()));
-			tfDireccionC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getDireccion()));
-		}
+			if (ContextoEncomienda.getInstance().getBanderaConsultaFactura())
+				System.out.println("porque estoy consultando  "+ContextoEncomienda.getInstance().getModoPago());
+			else
+				System.out.println("porque estoy creando factura  "+ContextoEncomienda.getInstance().getModoPago());
+			
+				if (ContextoEncomienda.getInstance().getModoPago().equals("flete destino")){
+					System.out.println("fletedestinooo o o o o o o o o !!!!!");
+					if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("nv")==0){
+						cbRIFCedulaC.getSelectionModel().select(0);	
+						tfRIFCedulaC.setText("V-");
+					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("ne")==0){
+						cbRIFCedulaC.getSelectionModel().select(0);
+						tfRIFCedulaC.setText("E-");
+					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jj")==0){
+						cbRIFCedulaC.getSelectionModel().select(1);
+						tfRIFCedulaC.setText("J-");
+					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jg")==0){
+						cbRIFCedulaC.getSelectionModel().select(1);
+						tfRIFCedulaC.setText("G-");
+					}
+				}
+				tfRIFCedulaC.setText(tfRIFCedulaC.getText()+String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getRifCedula()));
+				tfNombreC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getNombre()));
+				tfApellidoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getApellido()));
+				tfTelefonoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getTelefono()));
+				tfDireccionC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getDireccion()));
+				tfCorreoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getCorreo()));
+			
+		}	
 		
 		try{						
 			Session sesion1 = openSesion();
@@ -405,7 +418,9 @@ public class DestinatarioController {
 	
 	@FXML
 	private void actionBotonCancelar() throws Exception{
-		System.out.println("Boton Cancelar");			
+		System.out.println("Boton Cancelar");		
+	
+		
 		Stage stage = (Stage) bCancelar.getScene().getWindow();
 		stage.close();		
 	}

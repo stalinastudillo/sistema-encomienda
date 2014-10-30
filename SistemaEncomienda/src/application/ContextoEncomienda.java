@@ -24,6 +24,7 @@ public class ContextoEncomienda {
 	 // - - - - - - - - - CONTROLADOR DE ENCOMIENDA - - - - - - - - - - - - - //
 	 private boolean banderaRefresh = false;
 	 private boolean banderaNuevaFactura;
+	 private boolean banderaConsultaFactura = false;
 	 private Cliente remitenteArriba = new Cliente();
 	 private Cliente remitenteAbajo = new Cliente();
 	 private String remitArriba = new String();
@@ -244,5 +245,12 @@ public class ContextoEncomienda {
 	}
 	public void setIpostel(Ipostel ipostel) {
 		this.ipostel = ipostel;
-	}	
+	}
+	
+	public boolean getBanderaConsultaFactura() {
+		return banderaConsultaFactura;
+	}
+	public void setBanderaConsultaFactura(boolean banderaConsultaFactura) {
+		this.banderaConsultaFactura = banderaConsultaFactura;
+	}
 }

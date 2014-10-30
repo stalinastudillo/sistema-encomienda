@@ -12,10 +12,21 @@
 <AnchorPane minHeight="300.0" minWidth="500.0" onMouseEntered="#actionMouseEnter" prefHeight="516.0" prefWidth="641.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.EncomiendaController">
   <!-- TODO Add Nodes -->
   <children>   
-   <Label fx:id="lFecha" layoutX="460.0" layoutY="10.0" text="Fecha" visible="false" />   
-   <Label fx:id="lValorFecha" layoutX="500.0" layoutY="10.0" text="" visible="false" />
-   <Label fx:id="lBuscador" layoutX="460.0" layoutY="30.0" text="Buscador" visible="true" prefWidth="70"/>     
-   <TextField fx:id="tfBuscador" layoutX="530" layoutY="30.0" visible="true" prefWidth="60"/>   
+   <Label fx:id="lFactura" layoutX="400.0" layoutY="10.0" text="Nro Factura" visible="false" />  
+   <Label fx:id="lNroFactura" layoutX="480.0" layoutY="10.0" text="" visible="false" />
+   <Label fx:id="lFecha" layoutX="515.0" layoutY="10.0" text="Fecha" visible="false" />   
+   <Label fx:id="lValorFecha" layoutX="560.0" layoutY="10.0" text="" visible="false" />
+       
+   <TextField fx:id="tfBuscador" layoutX="500" layoutY="35.0" visible="true" prefWidth="60"/>   
+   <Button fx:id="bBuscarFactura" layoutX="560.0" layoutY="35.0" mnemonicParsing="false" onAction="#actionBotonFacturaBuscar" prefHeight="19.0" prefWidth="28.0" >
+    	<graphic>
+        <ImageView fitHeight="20.0" fitWidth="20.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@icon-squaresearch.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
    
   	<Label fx:id="lBandModoPago" layoutX="1.0" layoutY="1.0" text="" visible="false" />
     <Button fx:id="botonRemitente" disable="true" layoutX="114.0" layoutY="70.0" mnemonicParsing="false" onAction="#actionBotonRemitente" opacity="0.51" text="Remitente" textOverrun="ELLIPSIS" />
@@ -167,7 +178,7 @@
       </graphic>
     </Button>
     <Button fx:id="bPago" disable="true" layoutX="480.0" layoutY="400.0" mnemonicParsing="false" onAction="#botonActionPagoGuardarFact" text="Pago" />
-    <Button fx:id="bNuevaFactura" layoutX="560.0" layoutY="470.0" minHeight="23.0" minWidth="39.0" mnemonicParsing="false" onAction="#actionBotonFacturaNueva" prefHeight="29.0" prefWidth="39.0" text="">
+    <Button fx:id="bNuevaFactura" layoutX="560.0" layoutY="470.0" mnemonicParsing="false" onAction="#actionBotonFacturaNueva" prefHeight="29.0" prefWidth="39.0" text="">
       <graphic>
         <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
           <image>
@@ -177,7 +188,7 @@
       </graphic>
     </Button>
     <Label fx:id="lFacturaCodigo" layoutX="207.0" layoutY="6.0" text="" visible="false" />
-    <Button fx:id="bAnularFactura" layoutX="20.0" layoutY="10.0" minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#actionBotonFacturaEliminar" prefHeight="29.0" prefWidth="39.0" text="Anular Factura">
+    <Button fx:id="bAnularFactura" layoutX="20.0" layoutY="10.0" mnemonicParsing="false" onAction="#actionBotonFacturaEliminar" prefHeight="29.0" prefWidth="139.0" text="Anular Factura">
     </Button>
     <Label fx:id="lAlertaMsj" layoutX="266.0" layoutY="395.0" styleClass="labelrojo" text="" visible="false" />
     <RadioButton fx:id="rbValorDeclarado" disable="true" layoutX="166.0" layoutY="272.0" mnemonicParsing="false" onAction="#actionRbValorDeclarado" text="" />
