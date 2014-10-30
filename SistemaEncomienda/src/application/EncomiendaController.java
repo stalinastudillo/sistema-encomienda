@@ -45,6 +45,11 @@ import javafx.stage.Stage;
 
 public class EncomiendaController{	
 	
+	@FXML
+	private Label lFactura;
+	
+	@FXML
+	private Label lNroFactura;
 	
 	@FXML
 	private Label lFecha;
@@ -55,6 +60,9 @@ public class EncomiendaController{
 	@FXML
 	private TextField tfBuscador;
 	
+	@FXML
+	private Button bBuscarFactura;
+		
 	@FXML
 	private ChoiceBox cbEnvio;
 		
@@ -685,6 +693,7 @@ public class EncomiendaController{
 	@FXML
 	private void actionBotonFacturaNueva(){
 //		System.out.println("Factura Nueva ");
+		ContextoEncomienda.getInstance().setBanderaConsultaFactura(false);
 		ContextoEncomienda.getInstance().setBanderaNuevaFactura(true);
 		if (primeraejecucion){
 //			System.out.println("primera ejecucion + boton nueva factura ");			
@@ -742,12 +751,18 @@ public class EncomiendaController{
 		}catch(HibernateException he){
 			
 		}
-		ContextoEncomienda.getInstance().getDestinatario().setApellido(null);
-		ContextoEncomienda.getInstance().getDestinatario().setNombre(null);
-		ContextoEncomienda.getInstance().getRemitenteArriba().setApellido(null);
-		ContextoEncomienda.getInstance().getRemitenteArriba().setNombre(null);
+		ContextoEncomienda.getInstance().getDestinatario().setApellido("");
+		ContextoEncomienda.getInstance().getDestinatario().setNombre("");
+		ContextoEncomienda.getInstance().getDestinatario().setCorreo("");
+		ContextoEncomienda.getInstance().getDestinatario().setTelefono("");
+		ContextoEncomienda.getInstance().getDestinatario().setDireccion("");		
+		ContextoEncomienda.getInstance().getRemitenteArriba().setApellido("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setNombre("");
+		tfBuscador.setText("");
 		lFecha.setVisible(false);
 		lValorFecha.setVisible(false);
+		lFactura.setVisible(false);
+		lNroFactura.setVisible(false);
 		rbValorDeclarado.setSelected(false);
 		bValorDeclarado.setVisible(false);
 		bValorDeclarado.setDisable(false);
@@ -1135,7 +1150,12 @@ public class EncomiendaController{
 	
 	private void printFactura(Factura obj){	
 		 System.out.println("llegue a print factura  "+obj.getCodigo());
-		
+		 ContextoEncomienda.getInstance().setBanderaConsultaFactura(true);
+		 
+		 lFactura.setVisible(true);		 
+		 lNroFactura.setVisible(true);
+		 lNroFactura.setText(String.valueOf(obj.getNroFactura()) );
+		 
 		 lFecha.setVisible(true);
 		 lValorFecha.setVisible(true);
 		 lValorFecha.setText(obj.getFecha());
@@ -1172,12 +1192,11 @@ public class EncomiendaController{
 			 	rbCancelado.setSelected(true);
 			 	rbFletedestino.setSelected(false);			 	
 			 	desactivarRB();
-			 	lTituloFactura2.setText(obj.getClienteRemitente().getNombre()+" "+obj.getClienteRemitente().getApellido());
+			 	lTituloFactura2.setText(obj.getClienteRemitente().getNombre()+" "+obj.getClienteRemitente().getApellido());			 	
 		 }else if (obj.getModoPago().compareTo("flete destino")==0){
 		 		rbFletedestino.setSelected(true);
 		 		rbCancelado.setSelected(false);		 		
 		 		desactivarRB();	
-//		 		System.out.println("u u u u  "+obj.getClienteDestinatario().getNombre());
 		 		if (obj.getClienteDestinatario()!=null){
 		 			lTituloFactura2.setText(obj.getClienteDestinatario().getNombre()+" "+obj.getClienteDestinatario().getApellido());
 		 			lTituloFactura2.setVisible(true);
@@ -1186,7 +1205,8 @@ public class EncomiendaController{
 					lTituloFactura2.setVisible(true);
 				}
 	    }
-		
+		 ContextoEncomienda.getInstance().setModoPago(obj.getModoPago());
+		 
 		if (obj.getTipo_envio().compareTo("Oficina")==0){
 				cbEnvio.getSelectionModel().select(0);
 		}else if (obj.getTipo_envio().compareTo("Dirección fiscal")==0){
@@ -1211,15 +1231,27 @@ public class EncomiendaController{
 		for (int w=0;w<UnidadPesoList.size();w++)
 			if (UnidadPesoList.get(w).getDescripcion().equals( obj.getUnidadPeso().getDescripcion()) )
 				cbUnidadPeso.getSelectionModel().select(w);		
+		botonDestinatario.setDisable(false);botonDestinatario.setOpacity(1);
 		if (obj.getClienteDestinatario()!=null){
+			
 			lNombreDestinatario.setText(obj.getClienteDestinatario().getNombre()+" "+obj.getClienteDestinatario().getApellido());
 			lNombreDestinatario.setVisible(true);
+			ContextoEncomienda.getInstance().setDestinatario(obj.getClienteDestinatario());
 		}else{
 			lNombreDestinatario.setText(obj.getCNombre()+" "+obj.getCApellido());
 			lNombreDestinatario.setVisible(true);
+			Cliente oc = new Cliente();
+			oc.setNombre(obj.getCNombre());
+			oc.setApellido(obj.getCApellido());			
+			oc.setDireccion(obj.getCDireccion());
+			oc.setCorreo(obj.getCCorreo());
+			oc.setTelefono(obj.getCTelefono());
+			ContextoEncomienda.getInstance().setDestinatario(oc);
 		}
+		botonRemitente.setDisable(false);botonRemitente.setOpacity(1);
 		lNombreRemitente.setText(obj.getClienteRemitente().getNombre()+" "+obj.getClienteRemitente().getApellido());
 		lNombreRemitente.setVisible(true);
+//		ContextoEncomienda.getInstance().setRemitenteArriba(obj.getClienteRemitente());
 		
 		lTotalRecargo.setText( presentacionDecimal(lTotalRecargo.getText()) );
 		lTotalSeguro.setText( presentacionDecimal(lTotalSeguro.getText()) );
@@ -1416,6 +1448,32 @@ public class EncomiendaController{
 			}
 		 }
 	}
+	 
+	 @FXML
+	private void actionBotonFacturaBuscar(){
+		System.out.println("buscar factura "+tfBuscador.getText());
+		ContextoEncomienda.getInstance().setBanderaConsultaFactura(true);
+		
+		bCalcularMonto.setDisable(true);bCalcularMonto.setOpacity(0.5);
+		bSiguiente.setDisable(true);bAnterior.setDisable(true);
+		bSiguiente.setOpacity(0.5);bAnterior.setOpacity(0.5);
+		bUltimo.setDisable(true);bPrimero.setDisable(true);
+		bUltimo.setOpacity(0.5);bPrimero.setOpacity(0.5);
+		
+		Session ses = openSesion();		
+		try{		
+			Query query = ses.createQuery("from Factura where nroFactura = :variable");
+			query.setInteger("variable", Integer.parseInt(tfBuscador.getText()) );
+			query.setMaxResults(1);
+			
+			Factura objf = (Factura) query.uniqueResult();			
+			printFactura(objf);	
+			
+		}catch(NullPointerException e){
+			System.out.println("No se encuentra esta factura ");
+		}
+		closeSesion(ses);
+	 }
 	 
 	 
 }

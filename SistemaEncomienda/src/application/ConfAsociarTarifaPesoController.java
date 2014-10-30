@@ -218,7 +218,7 @@ public class ConfAsociarTarifaPesoController {
 						final Session sesion2 = openSesion();
 						
 						queryResultPrecioTarifa = sesion2.createQuery("from PrecioTarifa where codTarifa = :cd");
-						queryResultPrecioTarifa.setInteger("cd", TarifaList.get(arg2.intValue()).getCodigo());
+						queryResultPrecioTarifa.setInteger("cd", TarifaList.get(arg2.intValue()).getCodigo() );
 						
 						itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());
 						
