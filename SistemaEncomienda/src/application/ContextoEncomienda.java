@@ -25,6 +25,8 @@ public class ContextoEncomienda {
 	 private boolean banderaRefresh = false;
 	 private boolean banderaNuevaFactura;
 	 private boolean banderaConsultaFactura = false;
+	 private boolean banderaModifRemitenteUpNuevaFactura = false;
+	 private boolean banderaModifRemitenteDownNuevaFactura = false;
 	 private Cliente remitenteArriba = new Cliente();
 	 private Cliente remitenteAbajo = new Cliente();
 	 private String remitArriba = new String();
@@ -63,9 +65,23 @@ public class ContextoEncomienda {
 	 }
 	 public void setBanderaNuevaFactura(boolean banderaNuevaFactura) {
 		this.banderaNuevaFactura = banderaNuevaFactura;
-	 }	
+	 }		 
 	 
-	 public String getRemitArriba() {
+	 public boolean getBanderaModifRemitenteUpNuevaFactura() {
+		return banderaModifRemitenteUpNuevaFactura;
+	}
+	public void setBanderaModifRemitenteUpNuevaFactura(boolean banderaModifRemitenteUpNuevaFactura) {
+		this.banderaModifRemitenteUpNuevaFactura = banderaModifRemitenteUpNuevaFactura;
+	}
+	
+	public boolean getBanderaModifRemitenteDownNuevaFactura() {
+		return banderaModifRemitenteDownNuevaFactura;
+	}
+	public void setBanderaModifRemitenteDownNuevaFactura(boolean banderaModifRemitenteDownNuevaFactura) {
+		this.banderaModifRemitenteDownNuevaFactura = banderaModifRemitenteDownNuevaFactura;
+	}
+	
+	public String getRemitArriba() {
 		return remitArriba;
 	 }
 	 public void setRemitArriba(String remitArriba) {

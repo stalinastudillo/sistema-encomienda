@@ -98,41 +98,6 @@ public class DestinatarioController {
 	@FXML
 	private void initialize(){
 		System.out.println("destinatario controlador");
-		tfApellidoC.setText("");tfCorreoC.setText("");tfDireccionC.setText("");
-		tfNombreC.setText("");tfRIFCedulaC.setText("");	tfTelefonoC.setText("");
-		
-		if ( (ContextoEncomienda.getInstance().getBanderaNuevaFactura()) || (ContextoEncomienda.getInstance().getBanderaConsultaFactura()) ){			
-			
-			if (ContextoEncomienda.getInstance().getBanderaConsultaFactura())
-				System.out.println("porque estoy consultando  "+ContextoEncomienda.getInstance().getModoPago());
-			else
-				System.out.println("porque estoy creando factura  "+ContextoEncomienda.getInstance().getModoPago());
-			
-				if (ContextoEncomienda.getInstance().getModoPago().equals("flete destino")){
-					System.out.println("fletedestinooo o o o o o o o o !!!!!");
-					if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("nv")==0){
-						cbRIFCedulaC.getSelectionModel().select(0);	
-						tfRIFCedulaC.setText("V-");
-					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("ne")==0){
-						cbRIFCedulaC.getSelectionModel().select(0);
-						tfRIFCedulaC.setText("E-");
-					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jj")==0){
-						cbRIFCedulaC.getSelectionModel().select(1);
-						tfRIFCedulaC.setText("J-");
-					}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().compareTo("jg")==0){
-						cbRIFCedulaC.getSelectionModel().select(1);
-						tfRIFCedulaC.setText("G-");
-					}
-				}
-				tfRIFCedulaC.setText(tfRIFCedulaC.getText()+String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getRifCedula()));
-				tfNombreC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getNombre()));
-				tfApellidoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getApellido()));
-				tfTelefonoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getTelefono()));
-				tfDireccionC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getDireccion()));
-				tfCorreoC.setText(String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getCorreo()));
-			
-		}	
-		
 		try{						
 			Session sesion1 = openSesion();
 			queryResultOficina = sesion1.createQuery("from Oficina");
@@ -147,8 +112,88 @@ public class DestinatarioController {
 			closeSesion(sesion1);
 		}catch(HibernateException e){
 			e.printStackTrace();
-		}	
+		}
+		
+		if ( ( ContextoEncomienda.getInstance().getBanderaNuevaFactura() ) && 
+			 ( ContextoEncomienda.getInstance().getDestinatario().getNombre().equals("") ) ){
+		
+			tfApellidoC.setText("");tfCorreoC.setText("");tfDireccionC.setText("");
+			tfNombreC.setText("");tfRIFCedulaC.setText("");	tfTelefonoC.setText("");
+			System.out.println("NUEVA FACTURA - PRIMER OPEN VENTANA DESTINATARIO");
+		
+		}else if ( ( ContextoEncomienda.getInstance().getBanderaNuevaFactura() ) && 
+		    ( !ContextoEncomienda.getInstance().getDestinatario().getNombre().equals("") ) ){
+			
+			tfRIFCedulaC.setOpacity(1); tfRIFCedulaC.setDisable(false);
+			tfNombreC.setOpacity(1); tfNombreC.setDisable(false);
+			tfApellidoC.setOpacity(1); tfApellidoC.setDisable(false);
+			tfTelefonoC.setOpacity(1); tfTelefonoC.setDisable(false);
+			tfDireccionC.setOpacity(1); tfDireccionC.setDisable(false);
+			tfCorreoC.setOpacity(1); tfCorreoC.setDisable(false);
+			
+			tfNombreC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getNombre()) );
+			tfApellidoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getApellido()) );
+			tfTelefonoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getTelefono()) );
+			tfDireccionC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getDireccion()) );
+			tfCorreoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getCorreo()) );
+			
+			if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("nv")){
+				tfRIFCedulaC.setText("V");				cbRIFCedulaC.getSelectionModel().select(0);
+			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("ne")){
+				tfRIFCedulaC.setText("E");				cbRIFCedulaC.getSelectionModel().select(0);
+			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("jj")){
+				tfRIFCedulaC.setText("J");				cbRIFCedulaC.getSelectionModel().select(1);
+			}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("jg")){
+				tfRIFCedulaC.setText("G");				cbRIFCedulaC.getSelectionModel().select(1);
+			}
+			tfRIFCedulaC.setText( tfRIFCedulaC.getText() + String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getRifCedula()) );
+			for (int r=0;r<TarifaList.size();r++)
+				if (ContextoEncomienda.getInstance().getDestinatario().getTarifa().getDescripcion()!=null)
+					if ( ContextoEncomienda.getInstance().getDestinatario().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
+						cbTarifa.getSelectionModel().select(r);
+						break;
+					}
+			
+			System.out.println("NUEVA FACTURA -  > PRIMER OPEN VENTANA DESTINATARIO");
+		
+		}else if ( ( ContextoEncomienda.getInstance().getBanderaConsultaFactura() ) && 
+			    ( !ContextoEncomienda.getInstance().getDestinatario().getNombre().equals("") ) ){
+			
+			tfRIFCedulaC.setOpacity(1); tfRIFCedulaC.setDisable(true);
+			tfNombreC.setOpacity(1); tfNombreC.setDisable(true);
+			tfApellidoC.setOpacity(1); tfApellidoC.setDisable(true);
+			tfTelefonoC.setOpacity(1); tfTelefonoC.setDisable(true);
+			tfDireccionC.setOpacity(1); tfDireccionC.setDisable(true);
+			tfCorreoC.setOpacity(1); tfCorreoC.setDisable(true);
+			tfNombreC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getNombre()) );
+			tfApellidoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getApellido()) );
+			tfTelefonoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getTelefono()) );
+			tfDireccionC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getDireccion()) );
+			tfCorreoC.setText( String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getCorreo()) );
+			
+			if (ContextoEncomienda.getInstance().getModoPago().equals("fletedestino")){
 				
+				if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("nv")){
+					tfRIFCedulaC.setText("V");				cbRIFCedulaC.getSelectionModel().select(0);
+				}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("ne")){
+					tfRIFCedulaC.setText("E");				cbRIFCedulaC.getSelectionModel().select(0);
+				}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("jj")){
+					tfRIFCedulaC.setText("J");				cbRIFCedulaC.getSelectionModel().select(1);
+				}else if (ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula().equals("jg")){
+					tfRIFCedulaC.setText("G");				cbRIFCedulaC.getSelectionModel().select(1);
+				}
+				tfRIFCedulaC.setText( tfRIFCedulaC.getText() + String.valueOf(ContextoEncomienda.getInstance().getDestinatario().getRifCedula()) );				
+				for (int r=0;r<TarifaList.size();r++)
+					if (ContextoEncomienda.getInstance().getDestinatario().getTarifa().getDescripcion()!=null)
+						if ( ContextoEncomienda.getInstance().getDestinatario().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
+							cbTarifa.getSelectionModel().select(r);
+							break;
+						}			
+			}	
+			
+			System.out.println("CONSULTA FACTURA - CONSULTA VENTANA DESTINATARIO");
+		}
+						
 		tfRIFCedulaC.textProperty().addListener(new ChangeListener<String>(){
 			 @Override
 			    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {              
@@ -168,11 +213,11 @@ public class DestinatarioController {
 						 			tfRIFCedulaC.setText(newValue);	
 						 			Session sesion3 = openSesion();
 							 		
-									if ((vv[0] == 'V') && (vv[1] == '-')){	
-							 			queryResult = sesion3.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'nv\'");
+									if (vv[0] == 'V') {	
+							 			queryResult = sesion3.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'nv\'");
 										clienteList = FXCollections.observableArrayList(queryResult.list());
-						 			}else if ((vv[0] == 'E') && (vv[1] == '-')){
-							 			queryResult = sesion3.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'ne\'");
+						 			}else if (vv[0] == 'E'){
+							 			queryResult = sesion3.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'ne\'");
 										clienteList = FXCollections.observableArrayList(queryResult.list());
 						 			}	
 									
@@ -228,11 +273,11 @@ public class DestinatarioController {
 						 			
 						 			Session sesion2 = openSesion();
 							 		
-									if ((vv[0] == 'J') && (vv[1] == '-')){	
-							 			queryResult = sesion2.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'jj\'");
+									if (vv[0] == 'J') {	
+							 			queryResult = sesion2.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'jj\'");
 										clienteList = FXCollections.observableArrayList(queryResult.list());
-						 			}else if ((vv[0] == 'G') && (vv[1] == '-')){
-							 			queryResult = sesion2.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'jg\'");
+						 			}else if (vv[0] == 'G'){
+							 			queryResult = sesion2.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'jg\'");
 										clienteList = FXCollections.observableArrayList(queryResult.list());
 						 			}	
 									
@@ -343,9 +388,10 @@ public class DestinatarioController {
 		tfNombreC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
 		tfApellidoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
 		tfTelefonoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(11));
-		
+				
 		//tfNombreC.textProperty().addListener(libreria.mayuscula(tfNombreC));
-	}
+	}	
+	
 	
 	private void tipocedularif(char [] v, String tipo){
 		
@@ -359,7 +405,7 @@ public class DestinatarioController {
  			v = null;
  		}else if (v[0] == 'V'){	 			 			
  			if (tipo.compareTo("nopersona")==0){
-				tfRIFCedulaC.setText("V-");
+				tfRIFCedulaC.setText("V");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("juridico")==0){
 				tfRIFCedulaC.setText("");
@@ -367,7 +413,7 @@ public class DestinatarioController {
  			} 				
  		}else if (v[0] == 'E'){			
  			if (tipo.compareTo("nopersona")==0){
-				tfRIFCedulaC.setText("E-");
+				tfRIFCedulaC.setText("E");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("juridico")==0){
 				tfRIFCedulaC.setText("");
@@ -375,7 +421,7 @@ public class DestinatarioController {
  			} 
 		}else if (v[0] == 'J'){ 
 			if (tipo.compareTo("juridico")==0){
-				tfRIFCedulaC.setText("J-");
+				tfRIFCedulaC.setText("J");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("nopersona")==0){
 				tfRIFCedulaC.setText("");
@@ -383,7 +429,7 @@ public class DestinatarioController {
  			}
 		}else if (v[0] == 'G'){ 
 			if (tipo.compareTo("juridico")==0){
-				tfRIFCedulaC.setText("G-");
+				tfRIFCedulaC.setText("G");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("nopersona")==0){
 				tfRIFCedulaC.setText("");
@@ -428,36 +474,28 @@ public class DestinatarioController {
 	@FXML
 	private void actionBotonProcesar() throws Exception{
 		System.out.println("le doy click a procesar y chao  ");
-		 ContextoEncomienda.getInstance().setBanderaRefresh(true);
+		ContextoEncomienda.getInstance().setBanderaRefresh(true);
 		if (ContextoEncomienda.getInstance().getModoPago().compareTo("fletedestino") == 0){
-			if ( (tfRIFCedulaC.getText().compareTo("") != 0) && 
-					 (tfNombreC.getText().compareTo("") != 0) &&
-					 (tfApellidoC.getText().compareTo("") != 0) && 
-					 (tfTelefonoC.getText().compareTo("") != 0) &&
-					 (tfDireccionC.getText().compareTo("") != 0) ){
-						System.out.println("DEBO GUARDAR EN LA TABLA APARTE");
-						if (ContextoEncomienda.getInstance().getNuevoDestinatario())
-							guardarCliente();	
-						Stage stage = (Stage) bProcesar.getScene().getWindow();
-						stage.close();
-			}else{
-			    lAlerta.setVisible(true);
-			    lAlerta.setText("Debe ingresar los campos necesarios");
-			}
+			if ( (tfRIFCedulaC.getText().compareTo("") != 0) &&	 (tfNombreC.getText().compareTo("") != 0) &&
+				 (tfApellidoC.getText().compareTo("") != 0) && (tfTelefonoC.getText().compareTo("") != 0) &&
+				 (tfDireccionC.getText().compareTo("") != 0) ){
+					System.out.println("DEBO GUARDAR EN LA TABLA APARTE");
+					guardarCliente();							
+					Stage stage = (Stage) bProcesar.getScene().getWindow();
+					stage.close();
+			}else
+			    	lAlerta.setVisible(true);    lAlerta.setText("Debe ingresar los campos necesarios");
+			
 		}else if (ContextoEncomienda.getInstance().getModoPago().compareTo("cancelado") == 0){
-			if ( (tfNombreC.getText().compareTo("") != 0) &&
-					 (tfApellidoC.getText().compareTo("") != 0) && 
-					 (tfTelefonoC.getText().compareTo("") != 0) &&
-					 (tfDireccionC.getText().compareTo("") != 0) ){
-						System.out.println("DEBO GUARDAR EN LOS CAMPOS EXTRAS DE TABLA FACTURA");
-						if (ContextoEncomienda.getInstance().getNuevoDestinatario())
-							guardarCliente();						
-						Stage stage = (Stage) bProcesar.getScene().getWindow();
-						stage.close();
-				}else{
-					    lAlerta.setVisible(true);
-					    lAlerta.setText("Debe ingresar los campos necesarios");
-				}
+			if ( (tfNombreC.getText().compareTo("") != 0) && (tfApellidoC.getText().compareTo("") != 0) && 
+			     (tfTelefonoC.getText().compareTo("") != 0) && (tfDireccionC.getText().compareTo("") != 0) ){
+					System.out.println("DEBO GUARDAR EN LOS CAMPOS EXTRAS DE TABLA FACTURA");
+					guardarCliente();						
+					Stage stage = (Stage) bProcesar.getScene().getWindow();
+					stage.close();
+				}else
+				    lAlerta.setVisible(true);   lAlerta.setText("Debe ingresar los campos necesarios");
+				
 		}
 	}
 	
@@ -483,7 +521,17 @@ public class DestinatarioController {
 			String numcedula = tfRIFCedulaC.getText().substring(2);
 			ContextoEncomienda.getInstance().getDestinatario().setRifCedula(Integer.parseInt(numcedula));
 		}
+		System.out.println("- - guardando cedula "+ContextoEncomienda.getInstance().getDestinatario().getTipoRifCedula());
 		ContextoEncomienda.getInstance().getDestinatario().setOficina(OficinaList.get(0));
+		System.out.println(" la tarifa seleccionadaa kakakaka ");
+		
+		for (int r=0;r<TarifaList.size();r++){			
+			if (TarifaList.get(r).getDescripcion().equals(TarifaList.get(cbTarifa.getSelectionModel().getSelectedIndex())) ){
+				ContextoEncomienda.getInstance().getDestinatario().setTarifa(TarifaList.get(r));
+				break;
+			}			
+		}
+		
 	}
 	
 	private Session openSesion(){		

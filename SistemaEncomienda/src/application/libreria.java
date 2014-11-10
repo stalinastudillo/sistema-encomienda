@@ -1,8 +1,5 @@
 package application;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -71,9 +68,10 @@ public class libreria {
 	                e.consume();
 	            }
 	            if(e.getCharacter().matches("[A-Za-z ]")){ 
-
-	            }else{
-	                e.consume();
+	            	System.out.println("en libreria : : : : :  "+txt_TextField);
+	            }else{ //if(e.getCharacter().matches("[0-9]")){ 
+	            	System.out.println("NUmero no,   : : :  "+txt_TextField);
+	                e.consume();	                
 	            }
 	        }
 	    };

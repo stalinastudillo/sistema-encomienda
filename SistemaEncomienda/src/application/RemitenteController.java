@@ -1,5 +1,10 @@
 package application;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.naming.Context;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -136,9 +141,17 @@ public class RemitenteController {
     EncomiendaController ec = new EncomiendaController();
             
     private PruebaVentanas ProgramaPrincipal;
-    
+        
 	@FXML
 	private void initialize(){	
+		
+		tfNombreC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
+		tfApellidoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
+		tfTelefonoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(11));		
+		
+		tfNombreP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
+		tfApellidoP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
+		tfTelefonoP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(11));			
 		
 		try{						
 			Session sesion1 = openSesion();
@@ -155,105 +168,43 @@ public class RemitenteController {
 			closeSesion(sesion1);
 		}catch(HibernateException e){
 			e.printStackTrace();
-		}		
-			
-		if ((ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre()!=null) && (ContextoEncomienda.getInstance().getRemitenteArriba().getNombre()!=null)){
-			System.out.println(ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre());
-			System.out.println(ContextoEncomienda.getInstance().getRemitAbajo());
-			System.out.println(ContextoEncomienda.getInstance().getRemitenteArriba().getNombre());
-			System.out.println(ContextoEncomienda.getInstance().getRemitArriba());
-					
-			tfCedulaP.setDisable(false);   tfCedulaP.setOpacity(1);
-			tfNombreP.setDisable(true);	  tfNombreP.setOpacity(0.5);
-			tfApellidoP.setDisable(true);	  tfApellidoP.setOpacity(0.5);	
-			tfDireccionP.setDisable(true);   tfDireccionP.setOpacity(0.5);	
-			tfTelefonoP.setDisable(true);    tfTelefonoP.setOpacity(0.5);
-			tfCorreoP.setDisable(true);      tfCorreoP.setOpacity(0.5);
-			cbTarifaP.setDisable(true);      cbTarifaP.setOpacity(0.5);
-			
-			cbRIFCedulaC.setDisable(false);   cbRIFCedulaC.setOpacity(0.5);
-			tfRIFCedulaC.setDisable(true);   tfRIFCedulaC.setOpacity(0.5);
-			tfNombreC.setDisable(true);	  tfNombreC.setOpacity(0.5);
-			tfApellidoC.setDisable(true);	  tfApellidoC.setOpacity(0.5);	
-			tfDireccionC.setDisable(true);   tfDireccionC.setOpacity(0.5);	
-			tfTelefonoC.setDisable(true);    tfTelefonoC.setOpacity(0.5);
-			tfCorreoC.setDisable(true);      tfCorreoC.setOpacity(0.5);
-			cbTarifaC.setDisable(true);      cbTarifaC.setOpacity(0.5);
-
-			if (ContextoEncomienda.getInstance().getRemitenteArriba().getTipoRifCedula().compareTo("nv")==0){
-				tfCedulaP.setText("V-");
-			}else if (ContextoEncomienda.getInstance().getRemitenteArriba().getTipoRifCedula().compareTo("ne")==0){
-				tfCedulaP.setText("E-");
-			}			
-			
-			tfCedulaP.setText(tfCedulaP.getText()+String.valueOf(ContextoEncomienda.getInstance().getRemitenteArriba().getRifCedula()));
-			tfNombreP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getNombre());
-			tfApellidoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getApellido());
-			tfDireccionP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getDireccion());
-			tfTelefonoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getTelefono());
-			tfCorreoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getCorreo());
-			
-			for (int r=0;r<TarifaList.size();r++){
-				if ( ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
-					cbTarifaP.getSelectionModel().select(r);
-					break;
-				}
-			}
-			
-			if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTipoRifCedula().compareTo("nv")==0){
-				cbRIFCedulaC.getSelectionModel().select(0);	
-				tfRIFCedulaC.setText("V-");
-			}else if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTipoRifCedula().compareTo("ne")==0){
-				cbRIFCedulaC.getSelectionModel().select(0);
-				tfRIFCedulaC.setText("E-");
-			}else if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTipoRifCedula().compareTo("jj")==0){
-				cbRIFCedulaC.getSelectionModel().select(1);
-				tfRIFCedulaC.setText("J-");
-			}else if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTipoRifCedula().compareTo("jg")==0){
-				cbRIFCedulaC.getSelectionModel().select(1);
-				tfRIFCedulaC.setText("G-");
-			}			
-			
-			tfRIFCedulaC.setText(tfRIFCedulaC.getText()+String.valueOf(ContextoEncomienda.getInstance().getRemitenteAbajo().getRifCedula()));
-			tfNombreC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre());
-			tfApellidoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido());
-			tfDireccionC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getDireccion());
-			tfTelefonoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getTelefono());
-			tfCorreoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getCorreo());
-			
-			for (int r=0;r<TarifaList.size();r++){
-				if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
-					cbTarifaC.getSelectionModel().select(r);
-					break;
-				}
-			}
-			bProcesar.setDisable(false); bProcesar.setOpacity(1);
 		}
-
+		System.out.println("cliente remitente:  "+ContextoEncomienda.getInstance().getRemitArriba() +" /   "+  ContextoEncomienda.getInstance().getRemitenteArriba().getNombre());		
+		System.out.println("cliente envia:  "+ContextoEncomienda.getInstance().getRemitAbajo() +" /   "+ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre());
+			
+		cargaDatos();
+		
+		if (ContextoEncomienda.getInstance().getBanderaConsultaFactura()){
+			cargarConsultaFactura();			
+		}else if (ContextoEncomienda.getInstance().getBanderaNuevaFactura()){
+			if (ContextoEncomienda.getInstance().getRemitenteArriba().getNombre().equals("")){
+				cbRIFCedulaC.getSelectionModel().select(-1);
+				cbTarifaC.getSelectionModel().select(-1);
+				cbTarifaP.getSelectionModel().select(-1);
+				tfRIFCedulaC.setText("");tfCedulaP.setText("");
+				System.out.println("limpie por aqui * * * * * * * ");
+				System.out.println("si es la primera vez");
+			}else{
+				System.out.println("ya no es la primera vez");
+				tfRIFCedulaC.setDisable(false);tfRIFCedulaC.setOpacity(1);
+				cbRIFCedulaC.setOpacity(1);cbRIFCedulaC.setDisable(false);
+			}
+			cargarNuevaFactura();
+		}
+		
 		tfCedulaP.textProperty().addListener(new ChangeListener<String>(){
 			 @Override
 			    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {			    	 
 				
-				 if (ContextoEncomienda.getInstance().getRemitArriba().compareTo("consulta")==0){
-						tfNombreP.setDisable(false);	  tfNombreP.setOpacity(1);
-						tfApellidoP.setDisable(false);	  tfApellidoP.setOpacity(1);	
-						tfDireccionP.setDisable(false);   tfDireccionP.setOpacity(1);	
-						tfTelefonoP.setDisable(false);    tfTelefonoP.setOpacity(1);
-						tfCorreoP.setDisable(false);      tfCorreoP.setOpacity(1);
-						cbTarifaP.setDisable(false);      cbTarifaP.setOpacity(1);
-						
-						tfNombreP.setText("");		tfApellidoP.setText("");
-						tfDireccionP.setText("");	tfTelefonoP.setText("");
-						tfCorreoP.setText("");
-						cbTarifaP.getSelectionModel().select(-1);
-				 }
+				if ( ContextoEncomienda.getInstance().getBanderaNuevaFactura() && 
+						!ContextoEncomienda.getInstance().getRemitenteArriba().getNombre().equals("") ){
+					ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(true);
+				}
 				 
-				 bProcesar.setDisable(false);bProcesar.setOpacity(1);		 	
-				 	lEjemploCIP.setVisible(true);
-				 	lEjemploCIR.setVisible(false);			 	
+				 bProcesar.setDisable(false);        bProcesar.setOpacity(1);		 	
+				 	lEjemploCIP.setVisible(true);	 	lEjemploCIR.setVisible(false);			 	
 				 	v = newValue.toCharArray();
-				 	if (newValue.compareTo("")!=0){				 	
-				 		
+				 	if (newValue.compareTo("")!=0){				 		
 				 		if (v.length == 1){	
 				 			tipocedularif(v,"persona");					 		
 					 	}else if ((v.length > 2) && (v.length <= 10)){	
@@ -265,35 +216,41 @@ public class RemitenteController {
 					 			Session sesion1 = Main.sesionFactory.getCurrentSession();
 								sesion1.beginTransaction();
 						 		
-								if ((v[0] == 'V') && (v[1] == '-')){	
-						 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'nv\'");
-									clientearrayUp = FXCollections.observableArrayList(queryResult.list());
-					 			}else if ((v[0] == 'E') && (v[1] == '-')){
-						 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'ne\'");
+								if (v[0] == 'V') {	
+						 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'nv\'");									
+						 			clientearrayUp = FXCollections.observableArrayList(queryResult.list());
+					 			}else if (v[0] == 'E') {
+						 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'ne\'");
 									clientearrayUp = FXCollections.observableArrayList(queryResult.list());
 					 			}	
 								
 								if (clientearrayUp.size() > 0){
 									tfNombreP.setText(clientearrayUp.get(0).getNombre());
+									tfNombreP.setOpacity(0.5);tfNombreP.setDisable(true);
 									tfApellidoP.setText(clientearrayUp.get(0).getApellido());
+									tfApellidoP.setOpacity(0.5);tfApellidoP.setDisable(true);
 									tfDireccionP.setText(clientearrayUp.get(0).getDireccion());
+									tfDireccionP.setOpacity(0.5);tfDireccionP.setDisable(true);
 									tfTelefonoP.setText(clientearrayUp.get(0).getTelefono());
+									tfTelefonoP.setOpacity(0.5);tfTelefonoP.setDisable(true);
 									tfCorreoP.setText(clientearrayUp.get(0).getCorreo());
+									tfCorreoP.setOpacity(0.5);tfCorreoP.setDisable(true);
 									for (int r=0;r<TarifaList.size();r++){
 										if ( clientearrayUp.get(0).getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
 											cbTarifaP.getSelectionModel().select(r);
 											break;
 										}
-									}									
-									bandDatosArribaNuevo = false;									
+									}
+									cbTarifaP.setOpacity(0.5);cbTarifaP.setDisable(true);
+									bandDatosArribaNuevo = false;	
 								}else{
 									System.out.println("Ingreso nuevo Datos persona: ");
-									tfNombreP.setText("");
-									tfApellidoP.setText("");
-									tfDireccionP.setText("");
-									tfTelefonoP.setText("");
-									tfCorreoP.setText("");
-									cbTarifaP.getSelectionModel().select(-1);
+									tfNombreP.setText("");tfNombreP.setOpacity(1);tfNombreP.setDisable(false);
+									tfApellidoP.setText("");tfApellidoP.setOpacity(1);tfApellidoP.setDisable(false);
+									tfDireccionP.setText("");tfDireccionP.setOpacity(1);tfDireccionP.setDisable(false);
+									tfTelefonoP.setText("");tfTelefonoP.setOpacity(1);tfTelefonoP.setDisable(false);
+									tfCorreoP.setText("");tfCorreoP.setOpacity(1);tfCorreoP.setDisable(false);
+									cbTarifaP.getSelectionModel().select(-1);cbTarifaP.setOpacity(1);cbTarifaP.setDisable(false);
 									bandDatosArribaNuevo = true;
 								}						
 								sesion1.getTransaction().commit();
@@ -368,10 +325,20 @@ public class RemitenteController {
 		tfRIFCedulaC.textProperty().addListener(new ChangeListener<String>(){
 			 @Override
 			    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-				 				 
-				 lAlerta.setVisible(false);
-				 lEjemploCIP.setVisible(false);
-		    	 lEjemploCIR.setVisible(true);
+				 	
+				 if ( ContextoEncomienda.getInstance().getBanderaNuevaFactura() && 
+							!ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre().equals("") ){
+						ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(true);
+					}
+				 
+				 lAlerta.setVisible(false);		 lEjemploCIP.setVisible(false);   	 lEjemploCIR.setVisible(true);
+		    	 
+    	    	 if (cbRIFCedulaC.getSelectionModel().getSelectedIndex()==0){
+    	    		 seleccionCBRifCedula=1;
+    	    	 }else if (cbRIFCedulaC.getSelectionModel().getSelectedIndex()==1){
+    	    		 seleccionCBRifCedula=2;
+    	    	 } 		    	  
+		    	 
 		    	 if (seleccionCBRifCedula == 1){
 		        	 System.out.println("cédula de parte abajo NATURAL");
 		        		vv = newValue.toCharArray();
@@ -387,34 +354,40 @@ public class RemitenteController {
 						 			Session sesion1 = Main.sesionFactory.getCurrentSession();
 									sesion1.beginTransaction();
 							 		
-									if ((vv[0] == 'V') && (vv[1] == '-')){
-							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'nv\'");
+									if (vv[0] == 'V') {
+							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'nv\'");
 										clientearrayDown = FXCollections.observableArrayList(queryResult.list());
-						 			}else if ((vv[0] == 'E') && (vv[1] == '-')){
-							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'ne\'");
+						 			}else if (vv[0] == 'E') {
+							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'ne\'");
 										clientearrayDown = FXCollections.observableArrayList(queryResult.list());
 						 			}	
 									
 									if (clientearrayDown.size() > 0){
 										tfNombreC.setText(clientearrayDown.get(0).getNombre());
+										tfNombreC.setOpacity(0.5);tfNombreC.setDisable(true);
 										tfApellidoC.setText(clientearrayDown.get(0).getApellido());
+										tfApellidoC.setOpacity(0.5);tfApellidoC.setDisable(true);
 										tfDireccionC.setText(clientearrayDown.get(0).getDireccion());
+										tfDireccionC.setOpacity(0.5);tfDireccionC.setDisable(true);
 										tfTelefonoC.setText(clientearrayDown.get(0).getTelefono());
+										tfTelefonoC.setOpacity(0.5);tfTelefonoC.setDisable(true);
 										tfCorreoC.setText(clientearrayDown.get(0).getCorreo());
+										tfCorreoC.setOpacity(0.5);tfCorreoC.setDisable(true);
 										for (int r=0;r<TarifaList.size();r++){
 											if ( clientearrayDown.get(0).getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
 												cbTarifaC.getSelectionModel().select(r);
 												break;
 											}
 										}
+										cbTarifaC.setOpacity(0.5);cbTarifaC.setDisable(true);
 										bandDatosAbajoNuevo = false;
 									}else{
-										tfNombreC.setText("");
-										tfApellidoC.setText("");
-										tfDireccionC.setText("");
-										tfTelefonoC.setText("");
-										tfCorreoC.setText("");
-										cbTarifaC.getSelectionModel().select(-1);
+										tfNombreC.setText("");tfNombreC.setOpacity(1);tfNombreC.setDisable(false);
+										tfApellidoC.setText("");tfApellidoC.setOpacity(1);tfApellidoC.setDisable(false);
+										tfDireccionC.setText("");tfDireccionC.setOpacity(1);tfDireccionC.setDisable(false);
+										tfTelefonoC.setText("");tfTelefonoC.setOpacity(1);tfTelefonoC.setDisable(false);
+										tfCorreoC.setText("");tfCorreoC.setOpacity(1);tfCorreoC.setDisable(false);
+										cbTarifaC.getSelectionModel().select(-1);cbTarifaC.setOpacity(1);cbTarifaC.setDisable(false);
 										bandDatosAbajoNuevo = true;
 									}						
 									sesion1.getTransaction().commit();
@@ -439,34 +412,40 @@ public class RemitenteController {
 						 			Session sesion1 = Main.sesionFactory.getCurrentSession();
 									sesion1.beginTransaction();
 							 		
-									if ((vv[0] == 'J') && (vv[1] == '-')){	
-							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'jj\'");
+									if (vv[0] == 'J'){	
+							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'jj\'");
 										clientearrayDown = FXCollections.observableArrayList(queryResult.list());
-						 			}else if ((vv[0] == 'G') && (vv[1] == '-')){
-							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(2)+"AND tipoRifCedula=\'jg\'");
+						 			}else if (vv[0] == 'G'){
+							 			queryResult = sesion1.createQuery("from Cliente where rifCedula="+newValue.substring(1)+"AND tipoRifCedula=\'jg\'");
 										clientearrayDown = FXCollections.observableArrayList(queryResult.list());
 						 			}	
 									
 									if (clientearrayDown.size() > 0){
 										tfNombreC.setText(clientearrayDown.get(0).getNombre());
+										tfNombreC.setOpacity(0.5);tfNombreC.setDisable(true);
 										tfApellidoC.setText(clientearrayDown.get(0).getApellido());
+										tfApellidoC.setOpacity(0.5);tfApellidoC.setDisable(true);
 										tfDireccionC.setText(clientearrayDown.get(0).getDireccion());
+										tfDireccionC.setOpacity(0.5);tfDireccionC.setDisable(true);
 										tfTelefonoC.setText(clientearrayDown.get(0).getTelefono());
+										tfTelefonoC.setOpacity(0.5);tfTelefonoC.setDisable(true);
 										tfCorreoC.setText(clientearrayDown.get(0).getCorreo());
+										tfCorreoC.setOpacity(0.5);tfCorreoC.setDisable(true);
 										for (int r=0;r<TarifaList.size();r++){
 											if ( clientearrayDown.get(0).getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
 												cbTarifaC.getSelectionModel().select(r);
 												break;
 											}
 										}
+										cbTarifaC.setOpacity(0.5);cbTarifaC.setDisable(true);
 										bandDatosAbajoNuevo = false;
 									}else{
-										tfNombreC.setText("");
-										tfApellidoC.setText("");
-										tfDireccionC.setText("");
-										tfTelefonoC.setText("");
-										tfCorreoC.setText("");
-										cbTarifaC.getSelectionModel().select(-1);
+										tfNombreC.setText("");tfNombreC.setOpacity(1);tfNombreC.setDisable(false);
+										tfApellidoC.setText("");tfApellidoC.setOpacity(1);tfApellidoC.setDisable(false);
+										tfDireccionC.setText("");tfDireccionC.setOpacity(1);tfDireccionC.setDisable(false);
+										tfTelefonoC.setText("");tfTelefonoC.setOpacity(1);tfTelefonoC.setDisable(false);
+										tfCorreoC.setText("");tfCorreoC.setOpacity(1);tfCorreoC.setDisable(false);
+										cbTarifaC.getSelectionModel().select(-1);cbTarifaC.setOpacity(1);cbTarifaC.setDisable(false);
 										bandDatosAbajoNuevo = true;
 									}						
 									sesion1.getTransaction().commit();
@@ -501,7 +480,7 @@ public class RemitenteController {
 		cbRIFCedulaC.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {		
-				
+//				System.out.println("movimiento en cb cb cb cb cb cb cb cb cb ");
 				if (ContextoEncomienda.getInstance().getRemitAbajo().compareTo("consulta")==0){
 					 tfNombreC.setDisable(false);	  tfNombreC.setOpacity(1);
 					 tfApellidoC.setDisable(false);	  tfApellidoC.setOpacity(1);	
@@ -559,13 +538,84 @@ public class RemitenteController {
 		    }
 		});
 		
-		tfNombreP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
-		tfApellidoP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
-		tfTelefonoP.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(11));
+	}	
+	
+	private void cargaDatos(){
+		tfNombreP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getNombre());
+		tfApellidoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getApellido());
+		tfDireccionP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getDireccion());
+		tfCorreoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getCorreo());
+		tfTelefonoP.setText(ContextoEncomienda.getInstance().getRemitenteArriba().getTelefono());
 		
-		tfNombreC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
-		tfApellidoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.letraValidacion(30));
-		tfTelefonoC.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(11));		
+		if (ContextoEncomienda.getInstance().getRemitenteArriba().getRifCedula() != 0){
+			switch (ContextoEncomienda.getInstance().getRemitenteArriba().getTipoRifCedula()){
+				case "nv": tfCedulaP.setText("V");break; 
+				case "ne": tfCedulaP.setText("E");break;
+				case "jj": tfCedulaP.setText("J");break;
+				case "jg": tfCedulaP.setText("G");break;
+			}					
+			tfCedulaP.setText(tfCedulaP.getText()+String.valueOf(ContextoEncomienda.getInstance().getRemitenteArriba().getRifCedula()));
+		}
+		if (ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa()!=null){
+			for (int r=0;r<TarifaList.size();r++)
+				if (ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getDescripcion()!=null)
+					if ( ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
+						cbTarifaP.getSelectionModel().select(r);
+						break;
+					}	
+		}
+		System.out.println("por aqui paso cargando las tarifas de ambos  "+ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa() + "   "+ ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa());
+		tfNombreC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getNombre());
+		tfApellidoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido());
+		tfDireccionC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getDireccion());
+		tfCorreoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getCorreo());
+		tfTelefonoC.setText(ContextoEncomienda.getInstance().getRemitenteAbajo().getTelefono());
+		
+		if (ContextoEncomienda.getInstance().getRemitenteAbajo().getRifCedula() != 0){
+			switch (ContextoEncomienda.getInstance().getRemitenteAbajo().getTipoRifCedula()){
+				case "nv": tfRIFCedulaC.setText("V");cbRIFCedulaC.getSelectionModel().select(0);break;
+				case "ne": tfRIFCedulaC.setText("E");cbRIFCedulaC.getSelectionModel().select(0);break;
+				case "jj": tfRIFCedulaC.setText("J");cbRIFCedulaC.getSelectionModel().select(1);break;
+				case "jg": tfRIFCedulaC.setText("G");cbRIFCedulaC.getSelectionModel().select(1);break;	
+			}
+			tfRIFCedulaC.setText(tfRIFCedulaC.getText()+String.valueOf(ContextoEncomienda.getInstance().getRemitenteAbajo().getRifCedula()));
+		} 	
+		
+		if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa()!=null){
+			for (int r=0;r<TarifaList.size();r++)
+				if (ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getDescripcion()!=null)
+					if ( ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getDescripcion().equals(TarifaList.get(r).getDescripcion()) ){
+						cbTarifaC.getSelectionModel().select(r);
+						break;
+					}
+		}
+	}
+	
+	private void cargarConsultaFactura(){
+		tfNombreP.setOpacity(1);tfApellidoP.setOpacity(1);tfDireccionP.setOpacity(1);
+		tfCedulaP.setOpacity(1);tfCorreoP.setOpacity(1);tfTelefonoP.setOpacity(1);cbTarifaP.setOpacity(1);
+		tfNombreP.setDisable(true);tfApellidoP.setDisable(true);tfDireccionP.setDisable(true);
+		tfCedulaP.setDisable(true);tfCorreoP.setDisable(true);tfTelefonoP.setDisable(true);cbTarifaP.setDisable(true);
+				
+		tfNombreC.setOpacity(1);tfApellidoC.setOpacity(1);tfDireccionC.setOpacity(1);
+		tfRIFCedulaC.setOpacity(1);tfCorreoC.setOpacity(1);tfTelefonoC.setOpacity(1);
+		cbRIFCedulaC.setOpacity(1);
+		tfNombreC.setDisable(true);tfApellidoC.setDisable(true);tfDireccionC.setDisable(true);
+		tfRIFCedulaC.setDisable(true);tfCorreoC.setDisable(true);tfTelefonoC.setDisable(true);
+		cbRIFCedulaC.setDisable(true);
+	}
+	
+	private void cargarNuevaFactura(){
+		tfNombreP.setOpacity(0.5);tfApellidoP.setOpacity(0.5);tfDireccionP.setOpacity(0.5);
+		tfCedulaP.setOpacity(1);tfCorreoP.setOpacity(0.5);tfTelefonoP.setOpacity(0.5);cbTarifaP.setOpacity(0.5);
+		tfNombreP.setDisable(true);tfApellidoP.setDisable(true);tfDireccionP.setDisable(true);
+		tfCedulaP.setDisable(false);tfCorreoP.setDisable(true);tfTelefonoP.setDisable(true);cbTarifaP.setDisable(true);
+			
+		tfNombreC.setOpacity(0.5);tfApellidoC.setOpacity(0.5);tfDireccionC.setOpacity(0.5);
+		tfCorreoC.setOpacity(0.5);tfTelefonoC.setOpacity(0.5);
+		tfNombreC.setDisable(true);tfApellidoC.setDisable(true);tfDireccionC.setDisable(true);
+		tfCorreoC.setDisable(true);tfTelefonoC.setDisable(true);
+		
 	}
 	
 	private void tipocedularif(char [] v, String tipo){		
@@ -581,10 +631,10 @@ public class RemitenteController {
  			v = null;
  		}else if (v[0] == 'V'){	
  			if (tipo.compareTo("persona")==0){
-				tfCedulaP.setText("V-");
+				tfCedulaP.setText("V");
  				v = tfCedulaP.getText().toCharArray();
  			}else if (tipo.compareTo("nopersona")==0){
-				tfRIFCedulaC.setText("V-");
+				tfRIFCedulaC.setText("V");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("juridico")==0){
 				tfRIFCedulaC.setText("");
@@ -592,10 +642,10 @@ public class RemitenteController {
  			} 				
  		}else if (v[0] == 'E'){ 
  			if (tipo.compareTo("persona")==0){
-				tfCedulaP.setText("E-");
+				tfCedulaP.setText("E");
  				v = tfCedulaP.getText().toCharArray();
  			}else if (tipo.compareTo("nopersona")==0){
-				tfRIFCedulaC.setText("E-");
+				tfRIFCedulaC.setText("E");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("juridico")==0){
 				tfRIFCedulaC.setText("");
@@ -603,7 +653,7 @@ public class RemitenteController {
  			} 
 		}else if (v[0] == 'J'){ 
 			if (tipo.compareTo("juridico")==0){
-				tfRIFCedulaC.setText("J-");
+				tfRIFCedulaC.setText("J");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("persona")==0){
 				tfCedulaP.setText("");
@@ -614,7 +664,7 @@ public class RemitenteController {
  			}
 		}else if (v[0] == 'G'){ 
 			if (tipo.compareTo("juridico")==0){
-				tfRIFCedulaC.setText("G-");
+				tfRIFCedulaC.setText("G");
 				v = tfRIFCedulaC.getText().toCharArray();
  			}else if (tipo.compareTo("persona")==0){
 				tfCedulaP.setText("");
@@ -637,6 +687,7 @@ public class RemitenteController {
 	
 	@FXML
 	private void actionSiPersRemit(){
+		ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
 		bandMsjSi = true;
 		iFondoPersRemit.setVisible(false);					
 		lMsjPersRemit.setVisible(false);					
@@ -651,6 +702,7 @@ public class RemitenteController {
 		tfTelefonoC.setText(tfTelefonoP.getText());
 		tfDireccionC.setText(tfDireccionP.getText());
 		tfCorreoC.setText(tfCorreoP.getText());
+		cbTarifaC.getSelectionModel().select(cbTarifaP.getSelectionModel().getSelectedIndex());
 				
 		//DESACTIVO CAMPOS DE PERSONA Y REMITENTE
 		cbRIFCedulaC.setOpacity(1);
@@ -677,7 +729,8 @@ public class RemitenteController {
 	}
 	
 	@FXML
-	private void actionNoPersRemit(){		
+	private void actionNoPersRemit(){	
+		ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
 		bandMsjSi = false;		
 		iFondoPersRemit.setVisible(false);					
 		lMsjPersRemit.setVisible(false);					
@@ -695,41 +748,71 @@ public class RemitenteController {
 		bLimpiarP.setDisable(true);bLimpiarP.setOpacity(0.5);
 		
 		//ACTIVO CAMPOS DE REMITENTE
-		tfRIFCedulaC.setDisable(true);tfRIFCedulaC.setOpacity(1);
-		tfNombreC.setDisable(false);tfNombreC.setOpacity(1);
-		tfApellidoC.setDisable(false);tfApellidoC.setOpacity(1);
-		tfTelefonoC.setDisable(false);tfTelefonoC.setOpacity(1);
-		tfDireccionC.setDisable(false);tfDireccionC.setOpacity(1);
-		tfCorreoC.setDisable(false);tfCorreoC.setOpacity(1);
-		cbRIFCedulaC.setDisable(false);cbRIFCedulaC.setOpacity(1);
-		cbTarifaC.setDisable(false);cbTarifaC.setOpacity(1);
-		bLimpiarRD.setDisable(false);bLimpiarRD.setOpacity(1);
+		if (tfNombreC.getText().equals("")){		
+			tfNombreC.setText(""); tfApellidoC.setText("");
+			tfTelefonoC.setText(""); tfDireccionC.setText("");
+			tfCorreoC.setText(""); cbTarifaC.getSelectionModel().select(-1);
+			cbRIFCedulaC.getSelectionModel().select(-1);			
+			tfRIFCedulaC.setDisable(true);tfRIFCedulaC.setOpacity(1);
+			tfNombreC.setDisable(false);tfNombreC.setOpacity(1);
+			tfApellidoC.setDisable(false);tfApellidoC.setOpacity(1);
+			tfTelefonoC.setDisable(false);tfTelefonoC.setOpacity(1);
+			tfDireccionC.setDisable(false);tfDireccionC.setOpacity(1);
+			tfCorreoC.setDisable(false);tfCorreoC.setOpacity(1);
+			cbRIFCedulaC.setDisable(false);cbRIFCedulaC.setOpacity(1);
+			cbTarifaC.setDisable(false);cbTarifaC.setOpacity(1);
+			bLimpiarRD.setDisable(false);bLimpiarRD.setOpacity(1);
+		}
 		
 		bCancelar.setDisable(false);bCancelar.setOpacity(1);
 	}
 		
 	@FXML
 	private void actionLimpiarPersona() throws Exception{
-		tfCedulaP.setText("");
-		tfNombreP.setText("");
-		tfApellidoP.setText("");
-		tfTelefonoP.setText("");
-		tfDireccionP.setText("");
+		tfCedulaP.setText("");tfNombreP.setText("");tfApellidoP.setText("");
+		tfTelefonoP.setText("");tfDireccionP.setText("");tfCorreoP.setText("");
+		cbTarifaP.getSelectionModel().select(-1);
 	}
 	
 	@FXML
 	private void actionLimpiarRD() throws Exception{
-		tfRIFCedulaC.setText("");
-		tfNombreC.setText("");
-		tfApellidoC.setText("");
-		tfTelefonoC.setText("");
-		tfDireccionC.setText("");		
+		tfRIFCedulaC.setText("");tfNombreC.setText("");tfApellidoC.setText("");
+		tfTelefonoC.setText("");tfDireccionC.setText("");	tfCorreoC.setText("");	
+		cbRIFCedulaC.getSelectionModel().select(-1);cbTarifaC.getSelectionModel().select(-1);
 	}
 	
 	@FXML
 	private void actionBotonProcesar() throws Exception{
+			
+		if ( ContextoEncomienda.getInstance().getBanderaNuevaFactura() && 
+			!ContextoEncomienda.getInstance().getRemitenteArriba().getNombre().equals("") ){
+				
+			
+			if ((tfCedulaP.getText().compareTo("")!=0) && (tfNombreP.getText().compareTo("")!=0) && (tfApellidoP.getText().compareTo("")!=0)
+				&& (tfTelefonoP.getText().compareTo("")!=0) && (tfDireccionP.getText().compareTo("")!=0)){								
+					cbRIFCedulaC.setOpacity(1);cbRIFCedulaC.setDisable(false);
+					if (ContextoEncomienda.getInstance().getBanderaModifRemitenteUpNuevaFactura() &&
+						!ContextoEncomienda.getInstance().getBanderaModifRemitenteDownNuevaFactura()){
+							
+							List<Cliente> ll = new ArrayList();
+							ll.add(ContextoEncomienda.getInstance().getRemitenteAbajo());
+							clientearrayDown = FXCollections.observableArrayList(ll);
+							bandMsjPregunta = false;	
+					}else if (ContextoEncomienda.getInstance().getBanderaModifRemitenteUpNuevaFactura() &&
+						ContextoEncomienda.getInstance().getBanderaModifRemitenteDownNuevaFactura()){
+							bandMsjPregunta = true;
+					}else if (!ContextoEncomienda.getInstance().getBanderaModifRemitenteUpNuevaFactura() &&
+						ContextoEncomienda.getInstance().getBanderaModifRemitenteDownNuevaFactura()){						
+							List<Cliente> ll = new ArrayList();
+							ll.add(ContextoEncomienda.getInstance().getRemitenteArriba());						
+						    clientearrayUp = FXCollections.observableArrayList(ll);							
+							bandMsjPregunta = true;
+					}	
+			}else
+					lAlerta.setVisible(true);
+		}		
 	
-			if (bandMsjPregunta == false){
+			if (!bandMsjPregunta){
 				if ((tfCedulaP.getText().compareTo("")!=0) && (tfNombreP.getText().compareTo("")!=0) && (tfApellidoP.getText().compareTo("")!=0)
 					&& (tfTelefonoP.getText().compareTo("")!=0) && (tfDireccionP.getText().compareTo("")!=0) ){
 						iFondoPersRemit.setVisible(true);					
@@ -749,19 +832,22 @@ public class RemitenteController {
 						ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 						ContextoEncomienda.getInstance().setRemitenteAbajo(objDArriba);
 						System.out.println("NUEVO ARRIBA - COPIO ABAJO");
+						ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
 						Stage stage = (Stage) bProcesar.getScene().getWindow();
 						stage.close();
 						ContextoEncomienda.getInstance().setRemitArriba("nuevo");
 						ContextoEncomienda.getInstance().setRemitAbajo("copia");						
 					//GUARDADO ARRIBA, COPIO ABAJO
 					}else if (!bandDatosArribaNuevo){
-						objDArriba = clientearrayUp.get(0);
+						objDArriba = clientearrayUp.get(0);	
 						objDAbajo = objDArriba;
 						System.out.println("GUARDADO ARRIBA - COPIO ABAJO");
 						ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 						ContextoEncomienda.getInstance().setRemitenteAbajo(objDArriba);
 						ContextoEncomienda.getInstance().setRemitArriba("consulta");
 						ContextoEncomienda.getInstance().setRemitAbajo("copia");
+						ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
+						ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(false);
 						Stage stage = (Stage) bProcesar.getScene().getWindow();
 						stage.close();
 					}				
@@ -781,20 +867,24 @@ public class RemitenteController {
 								ContextoEncomienda.getInstance().setRemitAbajo("nuevo");
 								ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 								ContextoEncomienda.getInstance().setRemitenteAbajo(objDAbajo);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(false);
 								Stage stage = (Stage) bProcesar.getScene().getWindow();
 								stage.close();							
 							}else if (!bandDatosArribaNuevo){
-								objDArriba = clientearrayUp.get(0);
+								objDArriba = clientearrayUp.get(0);		
 								System.out.println("CONSULTA ARRIBA - NUEVO ABAJO");
 								ContextoEncomienda.getInstance().setRemitArriba("consulta");
 								ContextoEncomienda.getInstance().setRemitAbajo("nuevo");
 								ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 								ContextoEncomienda.getInstance().setRemitenteAbajo(objDAbajo);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(false);
 								Stage stage = (Stage) bProcesar.getScene().getWindow();
 								stage.close();							
 							}			
 						}else if (!bandDatosAbajoNuevo){
-							objDAbajo = clientearrayDown.get(0);
+								objDAbajo = clientearrayDown.get(0);
 							if (bandDatosArribaNuevo){
 								guardarClienteUp();
 								System.out.println("NUEVO ARRIBA - GUARDADO ABAJO");
@@ -802,15 +892,21 @@ public class RemitenteController {
 								ContextoEncomienda.getInstance().setRemitAbajo("consulta");
 								ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 								ContextoEncomienda.getInstance().setRemitenteAbajo(objDAbajo);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(false);
 								Stage stage = (Stage) bProcesar.getScene().getWindow();
 								stage.close();
 							}else if (!bandDatosArribaNuevo){
-								objDArriba = clientearrayUp.get(0);
-								System.out.println("CONSULTA ARRIBA - GUARDADO ABAJO");
+									
+								objDArriba = clientearrayUp.get(0);			
+								
+								System.out.println("CONSULTA ARRIBA - GUARDADO ABAJO  "+objDAbajo.getApellido() + "  "+objDAbajo.getNombre());
 								ContextoEncomienda.getInstance().setRemitArriba("consulta");
 								ContextoEncomienda.getInstance().setRemitAbajo("consulta");
 								ContextoEncomienda.getInstance().setRemitenteArriba(objDArriba);
 								ContextoEncomienda.getInstance().setRemitenteAbajo(objDAbajo);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteUpNuevaFactura(false);
+								ContextoEncomienda.getInstance().setBanderaModifRemitenteDownNuevaFactura(false);
 								Stage stage = (Stage) bProcesar.getScene().getWindow();
 								stage.close();
 							}
@@ -823,7 +919,6 @@ public class RemitenteController {
 	}	
 		
 	private void guardarClienteDown(){
-
 		objDAbajo.setNombre(tfNombreC.getText());
 		objDAbajo.setApellido(tfApellidoC.getText());
 		objDAbajo.setDireccion(tfDireccionC.getText());
@@ -847,6 +942,13 @@ public class RemitenteController {
 		String numcedula = tfRIFCedulaC.getText().substring(2);
 		objDAbajo.setRifCedula(Integer.parseInt(numcedula));
 		objDAbajo.setOficina(OficinaList.get(0));
+		
+		for (int r=0;r<TarifaList.size();r++){	
+			if (TarifaList.get(r).getDescripcion().equals( String.valueOf (TarifaList.get(cbTarifaC.getSelectionModel().getSelectedIndex()))) ){
+				objDAbajo.setTarifa(TarifaList.get(r));		break;
+			}			
+		}
+		
 	}
 	
 	private void guardarClienteUp(){		
@@ -869,6 +971,12 @@ public class RemitenteController {
 		String numcedula = tfCedulaP.getText().substring(2);
 		objDArriba.setRifCedula(Integer.parseInt(numcedula));
 		objDArriba.setOficina(OficinaList.get(0));
+		for (int r=0;r<TarifaList.size();r++){
+			if (TarifaList.get(r).getDescripcion().equals( String.valueOf (TarifaList.get (cbTarifaP.getSelectionModel().getSelectedIndex()) )) ){
+				objDArriba.setTarifa(TarifaList.get(r));	break;
+			}			
+		}
+		
 	} 
 	
 	@FXML

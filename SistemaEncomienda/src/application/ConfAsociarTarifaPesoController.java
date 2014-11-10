@@ -108,8 +108,6 @@ public class ConfAsociarTarifaPesoController {
 	@FXML
 	private TableColumn<PrecioTarifa,String> tcUnidad;
 			
-	private ObservableList<PrecioTarifa> itemsData = FXCollections.observableArrayList();
-	
 	private ObservableList<PrecioTarifa> itemsPrecioTarifa = FXCollections.observableArrayList();
 	
 	Query queryResultPrecioTarifa;

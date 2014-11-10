@@ -2,11 +2,9 @@ package application;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ListIterator;
-import java.util.ResourceBundle;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -15,7 +13,6 @@ import org.hibernate.exception.SQLGrammarException;
 
 import data.CiudadDestino;
 import data.Cliente;
-import data.DetalleVariableConfiguracion;
 import data.Factura;
 //import data.IVARemesa;
 import data.FormaPago;
@@ -23,24 +20,18 @@ import data.Ipostel;
 import data.Oficina;
 import data.PesoTarifa;
 import data.PrecioTarifa;
-import data.Temporal;
 import data.TipoEmbalaje;
 import data.Unidad;
-import data.VariableConfiguracion;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class EncomiendaController{	
@@ -605,7 +596,7 @@ public class EncomiendaController{
 					
 					lTotalIVA.setText(presentacionDecimal(porcentajeIVA.toString()));
 					lTotalTotal.setText(presentacionDecimal(total.toString()));
-					bPago.setDisable(false);
+					bPago.setDisable(false);bPago.setVisible(true);
 					bCalcularMonto.setDisable(true);
 				}else{
 					lAlertaMsj.setVisible(true);
@@ -692,17 +683,31 @@ public class EncomiendaController{
 
 	@FXML
 	private void actionBotonFacturaNueva(){
-//		System.out.println("Factura Nueva ");
 		ContextoEncomienda.getInstance().setBanderaConsultaFactura(false);
 		ContextoEncomienda.getInstance().setBanderaNuevaFactura(true);
-		if (primeraejecucion){
-//			System.out.println("primera ejecucion + boton nueva factura ");			
+		ContextoEncomienda.getInstance().getRemitenteArriba().setRifCedula(0);
+		ContextoEncomienda.getInstance().getRemitenteArriba().setTipoRifCedula("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setNombre("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setApellido("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setCorreo("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setDireccion("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setTelefono("");
+		ContextoEncomienda.getInstance().getRemitenteArriba().setTarifa(null);
+		
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setRifCedula(0);
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setTipoRifCedula("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setNombre("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setApellido("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setCorreo("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setDireccion("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setTelefono("");
+		ContextoEncomienda.getInstance().getRemitenteAbajo().setTarifa(null);
+		
+		if (primeraejecucion){	
 			try{						
 				Session sesion1 = openSesion();
 				queryResultTipoEmbalaje = sesion1.createQuery("from TipoEmbalaje");
-				queryResultCiudadDestino = sesion1.createQuery("from CiudadDestino");						
-					
-//				System.out.println("consulta de tipo embalaje "+queryResultTipoEmbalaje.list());
+				queryResultCiudadDestino = sesion1.createQuery("from CiudadDestino");	
 				
 				//------------- CARGA DE TIPO EMBALAJE			
 				
@@ -767,8 +772,8 @@ public class EncomiendaController{
 		bValorDeclarado.setVisible(false);
 		bValorDeclarado.setDisable(false);
 		ContextoEncomienda.getInstance().getValorDeclarado().setMonto(null);
-		rbCancelado.setDisable(false);
-		rbFletedestino.setDisable(false);		
+		rbCancelado.setDisable(false);rbCancelado.setOpacity(1);
+		rbFletedestino.setDisable(false);rbFletedestino.setOpacity(1);
 		rbCancelado.setSelected(false);
 		rbFletedestino.setSelected(false);	
 		cbEnvio.getSelectionModel().select(-1);
@@ -788,6 +793,9 @@ public class EncomiendaController{
 		lTotalIVA.setText("");		lTotalSeguro.setText("");
 		lTotalContrareembolso.setText("");		lTotalTotal.setText("");
 		lSubTotal.setText("");		lTotalipostel.setVisible(false);		
+		
+		bAnularFactura.setVisible(false); bAnularFactura.setDisable(true);
+		bPago.setVisible(false);
 	}		
 	
 	@FXML
@@ -810,6 +818,7 @@ public class EncomiendaController{
 			ContextoEncomienda.getInstance().setFacturaTotalSubTotal(lSubTotal.getText());
 			ContextoEncomienda.getInstance().setFacturaTotalIVA(lTotalIVA.getText());			
 			ContextoEncomienda.getInstance().setTotalFactura(lTotalTotal.getText());
+			
 			ProgramaPrincipal.mostrarVentanaFormaPago();
 		}else{
 			System.out.println("acción guardar");	
@@ -1149,6 +1158,7 @@ public class EncomiendaController{
 	}
 	
 	private void printFactura(Factura obj){	
+		
 		 System.out.println("llegue a print factura  "+obj.getCodigo());
 		 ContextoEncomienda.getInstance().setBanderaConsultaFactura(true);
 		 
@@ -1188,12 +1198,13 @@ public class EncomiendaController{
 		 cbNroPieza.setOpacity(1);
 		 cbTipoEmbalaje.setOpacity(1);
 		 cbUnidadPeso.setOpacity(1);
+		 
 		 if (obj.getModoPago().compareTo("cancelado")==0){
 			 	rbCancelado.setSelected(true);
 			 	rbFletedestino.setSelected(false);			 	
 			 	desactivarRB();
 			 	lTituloFactura2.setText(obj.getClienteRemitente().getNombre()+" "+obj.getClienteRemitente().getApellido());			 	
-		 }else if (obj.getModoPago().compareTo("flete destino")==0){
+		 }else if (obj.getModoPago().compareTo("fletedestino")==0){
 		 		rbFletedestino.setSelected(true);
 		 		rbCancelado.setSelected(false);		 		
 		 		desactivarRB();	
@@ -1205,7 +1216,7 @@ public class EncomiendaController{
 					lTituloFactura2.setVisible(true);
 				}
 	    }
-		 ContextoEncomienda.getInstance().setModoPago(obj.getModoPago());
+		ContextoEncomienda.getInstance().setModoPago(obj.getModoPago());
 		 
 		if (obj.getTipo_envio().compareTo("Oficina")==0){
 				cbEnvio.getSelectionModel().select(0);
@@ -1232,8 +1243,8 @@ public class EncomiendaController{
 			if (UnidadPesoList.get(w).getDescripcion().equals( obj.getUnidadPeso().getDescripcion()) )
 				cbUnidadPeso.getSelectionModel().select(w);		
 		botonDestinatario.setDisable(false);botonDestinatario.setOpacity(1);
-		if (obj.getClienteDestinatario()!=null){
-			
+		
+		if (obj.getClienteDestinatario()!=null){			
 			lNombreDestinatario.setText(obj.getClienteDestinatario().getNombre()+" "+obj.getClienteDestinatario().getApellido());
 			lNombreDestinatario.setVisible(true);
 			ContextoEncomienda.getInstance().setDestinatario(obj.getClienteDestinatario());
@@ -1249,10 +1260,12 @@ public class EncomiendaController{
 			ContextoEncomienda.getInstance().setDestinatario(oc);
 		}
 		botonRemitente.setDisable(false);botonRemitente.setOpacity(1);
+		
 		lNombreRemitente.setText(obj.getClienteRemitente().getNombre()+" "+obj.getClienteRemitente().getApellido());
 		lNombreRemitente.setVisible(true);
-//		ContextoEncomienda.getInstance().setRemitenteArriba(obj.getClienteRemitente());
-		
+		ContextoEncomienda.getInstance().setRemitenteArriba(obj.getClienteEnvia());
+		ContextoEncomienda.getInstance().setRemitenteAbajo(obj.getClienteRemitente());
+				
 		lTotalRecargo.setText( presentacionDecimal(lTotalRecargo.getText()) );
 		lTotalSeguro.setText( presentacionDecimal(lTotalSeguro.getText()) );
 		lTotalContrareembolso.setText( presentacionDecimal(lTotalContrareembolso.getText()) );
@@ -1341,7 +1354,7 @@ public class EncomiendaController{
 					 lNombreDestinatario.setText(ContextoEncomienda.getInstance().getDestinatario().getNombre()+" "+ContextoEncomienda.getInstance().getDestinatario().getApellido());
 				 }
 				if (ContextoEncomienda.getInstance().getRemitenteArriba().getNombre() != null){
-//						System.out.println(" - - - - - - - - -  ENTRE A REMITENTE  -- - - - - - - - - ");
+						System.out.println(" - - - - - - - - -  ENTRE A REMITENTE  -- - - - - - - - - ");
 						
 						bandRemitente = true;
 						  if ( ( (ContextoEncomienda.getInstance().getRemitArriba().compareTo("nuevo")==0) ||
@@ -1436,14 +1449,16 @@ public class EncomiendaController{
 					lSubTotal.setText(ContextoEncomienda.getInstance().getFacturaTotalSubTotal());
 					lTotalIVA.setText(ContextoEncomienda.getInstance().getFacturaTotalIVA());
 					lTotalTotal.setText(ContextoEncomienda.getInstance().getTotalFactura());
-					bandGuardarImprimir = true;				bPago.setVisible(true);
-					bPago.setText("Guardar e imprimir factura");		bPago.setDisable(false);
+					bandGuardarImprimir = true;				
+					bPago.setVisible(true);bPago.setOpacity(0.6);bPago.setDisable(false);
+					bPago.setText("Guardando e imprimiendo factura");					
 					desactivarComponentes();
 					rbFletedestino.setDisable(true); rbCancelado.setDisable(true);
 					rbFletedestino.setOpacity(0.5);  rbCancelado.setOpacity(0.5);
 					botonRemitente.setDisable(true); botonDestinatario.setDisable(true);
 					botonRemitente.setOpacity(0.5); botonDestinatario.setOpacity(0.5);
 					bValorDeclarado.setDisable(true); bValorDeclarado.setOpacity(0.5);
+					bPago.fire();			bPago.setDisable(true);
 				}				
 			}
 		 }
