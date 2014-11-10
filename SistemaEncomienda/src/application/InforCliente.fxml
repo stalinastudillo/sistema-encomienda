@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="531.0" prefWidth="508.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClienteController">
+<AnchorPane prefHeight="700.0" prefWidth="508.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ClienteController">
   <!-- TODO Add Nodes -->
   <children>
     <Label id="lRIF" fx:id="lCedulaRIF" layoutX="46.0" layoutY="30.0" text="RIF/Cedula" />
@@ -131,7 +131,19 @@
 	          </image>
 	        </ImageView>
 	      </graphic>
-	  </Button>    
+	  </Button> 
+	  <TableView fx:id="tvTabla" layoutX="10.0" layoutY="350.0" prefHeight="300.0" prefWidth="430.0" visible="false">
+	      <columns>
+	        <TableColumn fx:id="tcNroFiscal" prefWidth="85.0" text="NroFiscal" />
+	        <TableColumn fx:id="tcTipoEmbalaje" prefWidth="85.0" text="Embalaje" />
+	        <TableColumn fx:id="tcCiudadDestino" prefWidth="85.0" text="Destino" />
+	        <TableColumn fx:id="tcModoPago" prefWidth="85.0" text="Modo Pago" />
+	        <TableColumn fx:id="tcMonto" prefWidth="85.0" text="Monto" />      
+	      </columns>
+	      <stylesheets>
+	        <URL value="@estilo.css" />
+	      </stylesheets>
+      </TableView>	     
 	  </children>
 	  <stylesheets>
 	    <URL value="@estilo.css" />

@@ -41,6 +41,7 @@ public class InicioController {
 	VentanaConfVariable ventVariable;
 	VentanaConfIpostel ventConfIpostel;
 	VentanaReporte1 ventReporteUno;
+	VentanaConfigPest ventConfigPest;
 	
 	Query queryResultTipoEmbalaje, queryResultTarifa, queryResultUnidad, queryResultVarConf, queryResultPeso;
 	private ObservableList<TipoEmbalaje> TipoEmbalajeList = FXCollections.observableArrayList();  //Carga datos de Tabla TipoEmbalaje 
@@ -306,6 +307,17 @@ public class InicioController {
 			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN TABLA UNIDAD");
 			lAlertaMsj.setVisible(true);
 		} 
+	}
+	
+	@FXML
+	public void menuConfiguracion() throws Exception{
+		System.out.println("menu pestañas ! ! ! ! ! ! ! ! ! !");
+		 ventConfigPest = null;
+		 
+		 if (ventConfigPest == null){
+			 ventConfigPest = new VentanaConfigPest();
+			 ventConfigPest.start(new Stage());
+		 }
 	}
 	
 	@FXML

@@ -6,6 +6,8 @@ package application;
  * aqui no funciona el fire de siguiente..
  */
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ListIterator;
 
 import org.hibernate.HibernateException;
@@ -19,7 +21,9 @@ import data.CiudadDestino;
 import data.Cliente;
 import data.Factura;
 import data.Oficina;
+import data.PrecioTarifa;
 import data.Tarifa;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,10 +32,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class ClienteController {
 
@@ -122,9 +131,28 @@ public class ClienteController {
 	char [] v;
 	
 	Cliente objCliente = new Cliente();
-		
+	
 	@FXML
-	private void initialize(){				
+	private TableView<Factura> tvTabla = new TableView<Factura>();	
+	
+	@FXML
+	private TableColumn<Factura, String> tcNroFiscal;
+	
+	@FXML
+	private TableColumn<Factura, String> tcTipoEmbalaje;
+	
+	@FXML
+	private TableColumn<Factura, String> tcCiudadDestino;
+	
+	@FXML
+	private TableColumn<Factura, String> tcModoPago;
+	
+	@FXML
+	private TableColumn<Factura, String> tcMonto;
+	
+	@FXML
+	private void initialize(){		
+				
 		bSiguiente.setDisable(true);
 		bUltimo.setDisable(true);
 		
@@ -226,16 +254,16 @@ public class ClienteController {
 			 				tfRIFCedula.setText("");
 			 				v = null;
 			 		}else if ((v[0] == 'V') && (bandCedulaNatural)){	
-			 			tfRIFCedula.setText("V-");
+			 			tfRIFCedula.setText("V");
 			 			v = tfRIFCedula.getText().toCharArray();
 			 		}else if ((v[0] == 'E') && (bandCedulaNatural)){ 
-			 			tfRIFCedula.setText("E-");
+			 			tfRIFCedula.setText("E");
 			 			v = tfRIFCedula.getText().toCharArray();
 					}else if ((v[0] == 'J') && (bandCedulaJuridico)){ 
-			 			tfRIFCedula.setText("J-");
+			 			tfRIFCedula.setText("J");
 			 			v = tfRIFCedula.getText().toCharArray();
 					}else if ((v[0] == 'G') && (bandCedulaJuridico)){ 
-			 			tfRIFCedula.setText("G-");
+			 			tfRIFCedula.setText("G");
 			 			v = tfRIFCedula.getText().toCharArray();
 					}else{
 			 			tfRIFCedula.setText("");
@@ -310,12 +338,10 @@ public class ClienteController {
 		
 	@FXML
 	private void actionBotonPrimero() throws Exception{
-		bAnterior.setDisable(true);
-		bPrimero.setDisable(true);
-		bSiguiente.setDisable(false);
-		bUltimo.setDisable(false);	
-		lAlertaMsj.setVisible(false);
-		lAlertaRIFCedula.setVisible(false);		
+		tvTabla.setVisible(false);
+		bAnterior.setDisable(true);		bPrimero.setDisable(true);
+		bSiguiente.setDisable(false);		bUltimo.setDisable(false);	
+		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);		
 		
 		try{
 			Session sesion1 = openSesion();			
@@ -338,7 +364,8 @@ public class ClienteController {
 	}
 	
 	@FXML
-	private void actionBotonUltimo() throws Exception{		
+	private void actionBotonUltimo() throws Exception{
+		tvTabla.setVisible(false);
 		System.out.println("ultimo ");
 		bAnterior.setDisable(false);
 		bPrimero.setDisable(false);
@@ -368,6 +395,7 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonAnterior() throws Exception{
+		tvTabla.setVisible(false);
 		System.out.println("anterior");
 		lAlertaMsj.setVisible(false);
 		lAlertaRIFCedula.setVisible(false);	
@@ -417,11 +445,10 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonSiguiente() throws Exception{	
+		tvTabla.setVisible(false);
 		System.out.println("siguiente");
-		lAlertaMsj.setVisible(false);
-		lAlertaRIFCedula.setVisible(false);
-		bAnterior.setDisable(false);
-		bPrimero.setDisable(false);
+		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);
+		bAnterior.setDisable(false);		bPrimero.setDisable(false);
 		
 		try{				
 			System.out.println("siguiente::::  "+objCliente.getCodigo());
@@ -660,7 +687,50 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonConsultarFactura() throws Exception{
-		System.out.println(" consultar facturas de ");
+		tvTabla.setVisible(true);
+		System.out.println("Consultar facturas de "+objCliente.getDireccion() + " "+objCliente.getCodigo());
+		tcNroFiscal.setCellValueFactory(new PropertyValueFactory<Factura, String>("controlFiscal"));
+		tcTipoEmbalaje.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factura,String>, ObservableValue<String>>() {			
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<Factura, String> arg0) {				
+				return new SimpleStringProperty(""+arg0.getValue().getTipo_embalaje().getNombre());
+		}});
+		tcCiudadDestino.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factura,String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<Factura, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getCuidadDestino().getDescripcion());
+		}});
+		tcMonto.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factura,String>, ObservableValue<String>>() {
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<Factura, String> arg0) {
+				DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+				dfs.setDecimalSeparator('.');
+				DecimalFormat df = new DecimalFormat("##.00",dfs);				
+				return new SimpleStringProperty(""+df.format(arg0.getValue().getMontoTotal()));
+		}});
+		tcModoPago.setCellValueFactory(new PropertyValueFactory<Factura, String>("modoPago"));
+		
+		tvTabla.setColumnResizePolicy(tvTabla.UNCONSTRAINED_RESIZE_POLICY);
+		
+		Query queryTabla;
+		ObservableList<Factura> itemsTabla = FXCollections.observableArrayList();
+		itemsTabla.clear();
+		Session ses = openSesion();
+		
+		queryTabla = ses.createQuery("FROM Factura WHERE ((modoPago = :mpfd AND CodClienteDestinatario = :clid) OR (modoPago = :mpc AND CodClienteRemitente = :clir))");
+		queryTabla.setString("mpfd", "flete destino");
+		queryTabla.setString("mpc", "cancelado");
+		queryTabla.setInteger("clid", objCliente.getCodigo());
+		queryTabla.setInteger("clir", objCliente.getCodigo());
+		itemsTabla = FXCollections.observableArrayList(queryTabla.list());
+		
+		if (itemsTabla.isEmpty()){
+			itemsTabla.clear();tvTabla.setItems(itemsTabla);System.out.println("el cliente no tiene facturas asociadas");
+		}else{
+			tvTabla.setItems(itemsTabla);System.out.println("el cliente tiene facturas asociadas");
+		}
+		closeSesion(ses);				
+		System.out.println("Consultar facturas de - - ");
 	} 
 	
 	private Session openSesion(){

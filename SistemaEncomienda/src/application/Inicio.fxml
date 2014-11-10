@@ -34,6 +34,11 @@
             	<MenuItem mnemonicParsing="false" text="Ipostel" onAction="#menuIpostel" fx:id="miIpostel"/>            	
          	</items>
         </Menu>
+        <Menu  mnemonicParsing="false" text="Pesta#as" fx:id="mbPesta">
+        	<items>
+        		<MenuItem mnemonicParsing="false" text="Configss" onAction="#menuConfiguracion"/>
+        	</items>
+        </Menu>
         <Menu mnemonicParsing="false" text="Reportes" fx:id="mbReportes">
           <items>
             <MenuItem mnemonicParsing="false" text="Reporte 1" onAction="#menuReporte1"/>
