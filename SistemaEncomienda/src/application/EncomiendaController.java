@@ -1,10 +1,14 @@
 package application;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ListIterator;
+
+import javax.print.*;
+import javax.print.attribute.*;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -247,6 +251,8 @@ public class EncomiendaController{
 	
 	@FXML
 	private void initialize(){	
+		
+//		comandoimprimir();
 		
 			tfPeso.focusedProperty().addListener(new ChangeListener<Boolean>(){
 			    @Override
@@ -530,6 +536,43 @@ public class EncomiendaController{
 			
 			tfSeguro.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
 	}
+	
+	private void comandoimprimir(){
+		String ruta="C:/prueba/Hola.txt";	FileInputStream inputStream = null;
+		
+		try {	inputStream = new FileInputStream(ruta);		
+		} catch (FileNotFoundException e) {	System.out.println("no hay archivo doc");	}
+		
+		if (inputStream == null) return;  				
+				
+//		describe el tipo de datos que se va a imprimir y cómo se almacenan los datos
+		DocFlavor docF = DocFlavor.INPUT_STREAM.AUTOSENSE;	
+//		DocFlavor docF = DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF_8;
+		
+		Doc document = new SimpleDoc(inputStream, docF, null);		
+		
+		try {	System.out.println("bytes: "+document.getStreamForBytes());
+		} catch (IOException e1) {	e1.printStackTrace();	}
+		
+//		para establecer algunos atributos de la impresora
+		PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();	
+		
+//		localizar impresoras, con lookupdefaultprintservice usa la impresora predeterminada
+		PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
+		
+//		PrintService[] impresorasdisponible = PrintServiceLookup.lookupPrintServices(null, null);						
+//		for (PrintService ps: impresorasdisponible)		System.out.println(ps.getName());			
+		
+		if (defaultPrintService != null){		
+			DocPrintJob printJob = defaultPrintService.createPrintJob();
+		
+			try{	printJob.print(document, attributeSet);		
+			}catch (Exception e) {		e.printStackTrace();	}
+		
+			try {	inputStream.close();
+			} catch (IOException e) {	e.printStackTrace();	}
+		}
+	}	
 	
 	private boolean validarInformacionCompleta(){
 		

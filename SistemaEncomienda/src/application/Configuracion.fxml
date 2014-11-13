@@ -60,8 +60,7 @@
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
-      </GridPane>
-     
+      </GridPane>     
   </children>
   <stylesheets>
     <URL value="@estilo.css" />
