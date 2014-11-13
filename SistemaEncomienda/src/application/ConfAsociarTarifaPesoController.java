@@ -75,7 +75,7 @@ public class ConfAsociarTarifaPesoController {
 	private Map<String,Integer> MapTarifa = new LinkedHashMap<String, Integer>();
 	private Map<String,Integer> MapPeso = new LinkedHashMap<String, Integer>();
 	
-	private String tarifaSeleccionada = null;
+	
 	
 	Query queryResultTarifa;
 	
@@ -92,7 +92,7 @@ public class ConfAsociarTarifaPesoController {
 	
 	private boolean bandTarifa = false, bandPeso = false, bandPrecio = false, bandNuevo = false, bandEditar = false;
 	private boolean bandSiExiste = false;
-	
+	private String tarifaSeleccionada = null;
 	@FXML
 	private TableView<PrecioTarifa> tvTabla = new TableView<PrecioTarifa>();	
 		
@@ -202,13 +202,9 @@ public class ConfAsociarTarifaPesoController {
 				tarifaSeleccionada = opcionTarifa.get(arg2.intValue());
 				System.out.println(" - - - - - - --- - - - - - - - - - - - - - - - - - - ");
 				System.out.println("tarifa seleccionada:   "+tarifaSeleccionada+ " desde el hlm: " + MapTarifa.get(tarifaSeleccionada));
-				lMsj.setVisible(false);
-				bMas.setDisable(false);
-				tfPrecio.setDisable(false);
-				cbPeso.setDisable(false);
-				cargaPeso();	
-				bandTarifa=true;
-				tfPrecio.setText("");
+				lMsj.setVisible(false);				bMas.setDisable(false);
+				tfPrecio.setDisable(false);				cbPeso.setDisable(false);
+				cargaPeso();	bandTarifa=true;		tfPrecio.setText("");
 				
 				if (bandTarifa){
 					try{							
