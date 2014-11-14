@@ -1,6 +1,9 @@
 package application;
 
 
+//http://incepttechnologies.blogspot.com/p/javafx-tableview-with-pagination-and.html
+// y proyecto ejemplo en escritorio
+
 /*
  * al eliminar el ultimo de la lista debe mostrar el anterior. 
  * aqui no funciona el fire de siguiente..
@@ -14,14 +17,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
-
-import data.CiudadDestino;
 import data.Cliente;
 import data.Factura;
 import data.Oficina;
-import data.PrecioTarifa;
 import data.Tarifa;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -32,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -149,6 +148,9 @@ public class ClienteController {
 	
 	@FXML
 	private TableColumn<Factura, String> tcMonto;
+	
+	@FXML
+	private Pagination cPaginator;
 	
 	@FXML
 	private void initialize(){		
@@ -339,6 +341,7 @@ public class ClienteController {
 	@FXML
 	private void actionBotonPrimero() throws Exception{
 		tvTabla.setVisible(false);
+		cPaginator.setVisible(false);
 		bAnterior.setDisable(true);		bPrimero.setDisable(true);
 		bSiguiente.setDisable(false);		bUltimo.setDisable(false);	
 		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);		
@@ -366,6 +369,7 @@ public class ClienteController {
 	@FXML
 	private void actionBotonUltimo() throws Exception{
 		tvTabla.setVisible(false);
+		cPaginator.setVisible(false);
 		System.out.println("ultimo ");
 		bAnterior.setDisable(false);
 		bPrimero.setDisable(false);
@@ -396,6 +400,7 @@ public class ClienteController {
 	@FXML
 	private void actionBotonAnterior() throws Exception{
 		tvTabla.setVisible(false);
+		cPaginator.setVisible(false);
 		System.out.println("anterior");
 		lAlertaMsj.setVisible(false);
 		lAlertaRIFCedula.setVisible(false);	
@@ -445,7 +450,8 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonSiguiente() throws Exception{	
-		tvTabla.setVisible(false);
+		tvTabla.setVisible(false);		
+		cPaginator.setVisible(false);
 		System.out.println("siguiente");
 		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);
 		bAnterior.setDisable(false);		bPrimero.setDisable(false);
@@ -683,11 +689,14 @@ public class ClienteController {
  		cbRIFCedula.getSelectionModel().select(-1);
  		bAceptar.setDisable(true);
  		bEliminar.setDisable(true);
+ 		tvTabla.setVisible(false);
+		cPaginator.setVisible(false);
 	}
 	
 	@FXML
 	private void actionBotonConsultarFactura() throws Exception{
 		tvTabla.setVisible(true);
+		cPaginator.setVisible(true);
 		System.out.println("Consultar facturas de "+objCliente.getDireccion() + " "+objCliente.getCodigo());
 		tcNroFiscal.setCellValueFactory(new PropertyValueFactory<Factura, String>("controlFiscal"));
 		tcTipoEmbalaje.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factura,String>, ObservableValue<String>>() {			
