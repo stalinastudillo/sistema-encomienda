@@ -175,490 +175,47 @@ public class ConfigPestController {
 //				System.out.println("arg0 "+arg0.getValue().getText());//Tab seleccionada	System.out.println("arg1 "+arg1.getText());//Tab anterior
 				System.out.println("arg2 "+arg2.getText());//Tab seleccionada
 				
-				if (arg2.getText().equals("Unidad")){
-					
-					System.out.println("estoy en unidad");	
-					tfuUnidad.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	luAlerta.setVisible(false);
-					    }
-					});
-					tfuFactor.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	luAlerta.setVisible(false);
-					    }
-					});
-					
-				}else if (arg2.getText().equals("Tarifa")){
-				
-					System.out.println("estoy en tarifa");		
-					tftTarifa.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	ltAlerta.setVisible(false);
-					    }
-					});
-				
-				}else if (arg2.getText().equals("Peso")){
-					
-					Session sesion1 = openSesion();		
-					queryResultUnidad = sesion1.createQuery("from Unidad");
-					UnidadList = FXCollections.observableArrayList(queryResultUnidad.list());
-					for (int r=0;r<UnidadList.size();r++){
-						opcionUnidad.add(UnidadList.get(r).getDescripcion());
-					}
-					
-					cbpUnidad.setItems(opcionUnidad);
-					cbpUnidad.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-						@Override
-						public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-							System.out.println(opcionUnidad.get(arg2.intValue()));
-							bandUnidad=true;
-							lpAlerta.setVisible(false);
-					}});
-					
-					tfpDesde.lengthProperty().addListener(new ChangeListener<Number>(){
-					     @Override
-					     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
-					    	 bandDesde = true;     lpAlerta.setVisible(false);
-					    	 System.out.println("idEditar desde tfdesde: "+idEditar);
-					}});
-					
-					tfpHasta.lengthProperty().addListener(new ChangeListener<Number>(){
-					     @Override
-					     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
-					    	 bandHasta = true;
-						     lpAlerta.setVisible(false);
-						     System.out.println("idEditar desde tfhasta: "+idEditar);	
-					}});		
-					
-					
-					tcpRangoPesoPT.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PesoTarifa, String>, ObservableValue<String>>(){
-						@Override
-						public ObservableValue<String> call(CellDataFeatures<PesoTarifa, String> arg0) {
-							return new SimpleStringProperty(""+arg0.getValue().getDesde()+"-"+arg0.getValue().getHasta());
-						}			
-					});
-					
-					tcpUnidadPT.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PesoTarifa, String>, ObservableValue<String>>(){
-						@Override
-						public ObservableValue<String> call(CellDataFeatures<PesoTarifa, String> arg0) {
-							return new SimpleStringProperty(""+arg0.getValue().getUndMedida().getDescripcion());
-						}			
-					});
-					
-					tvpTablaPT.setColumnResizePolicy(tvpTablaPT.UNCONSTRAINED_RESIZE_POLICY);	
-					tvpTablaPT.setVisible(true);
-					queryResultTabla = sesion1.createQuery("from PesoTarifa");
-					itemsPesoTarifa = FXCollections.observableArrayList(queryResultTabla.list()); 
-					tvpTablaPT.setItems(itemsPesoTarifa);
-					tvpTablaPT.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PesoTarifa>(){
-						@Override
-						public void changed(ObservableValue<? extends PesoTarifa> arg0, PesoTarifa arg1,PesoTarifa arg2) {
-								bpMas.setDisable(true);	
-								bpEditar.setDisable(false);
-								if (arg2 != null){
-									System.out.println("Opción de tabla seleccionada arg2: "+arg2.getDesde()+" "+arg2.getHasta()+" "+arg2.getUndMedida().getDescripcion());
-									tfpDesde.setText(String.valueOf(arg2.getDesde()));
-									tfpHasta.setText(String.valueOf(arg2.getHasta()));
-									idEditar = arg2.getCodigo();
-									
-									for (int d=0;d<UnidadList.size();d++){
-										if (UnidadList.get(d).getCodigo() == arg2.getUndMedida().getCodigo()){
-											cbpUnidad.getSelectionModel().select(d);
-											break;
-										}
-									}	
-									
-									for (int d=0;d<itemsPesoTarifa.size();d++){
-										if (itemsPesoTarifa.get(d).getCodigo() == arg2.getCodigo())
-											posEditar=d;
-									}
-								}
-						}			
-					});	
-					closeSesion(sesion1);
-					tfpDesde.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
-					tfpHasta.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
-				
-				}else if (arg2.getText().equals("Variable")){
-					
-					tfvVariable.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	lvAlerta.setVisible(false);
-					    }
-					});				
-				
-				}else if (arg2.getText().equals("Cuidad Destino")){
-					
-					tfcdCiudadDestino.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	lcdAlerta.setVisible(false);
-					    }
-					});
-				
-				}else if (arg2.getText().equals("Tipo Embalaje")){
-					
-					tfteTipoEmbalaje.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	lteAlerta.setVisible(false);
-					    }
-					});
-				
-				}else if (arg2.getText().equals("Asociar Tarifa/Peso")){
-					
-					System.out.println("estoy en asociar tarifa/peso");		
-					tcatpTarifa.setCellValueFactory(new PropertyValueFactory<PrecioTarifa,String>("tarifa"));
-					tcatpPeso.setCellValueFactory(new PropertyValueFactory<PrecioTarifa,String>("PesoTarifa"));
-					
-					tcatpUnidad.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PrecioTarifa, String>, ObservableValue<String>>(){
-						@Override
-						public ObservableValue<String> call(CellDataFeatures<PrecioTarifa, String> arg0) {
-							return new SimpleStringProperty(""+arg0.getValue().getPesoTarifa().getUndMedida().getDescripcion());
-						}			
-					});	
-					
-					tcatpMonto.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PrecioTarifa,String>, ObservableValue<String>>(){
-					     @Override
-					     public ObservableValue<String> call(CellDataFeatures<PrecioTarifa,String> arg0) {
-					      // TODO Auto-generated method stub
-					      DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
-					 	  simbolos.setDecimalSeparator('.');
-					      DecimalFormat xx = new DecimalFormat("##.00",simbolos);
-					      return new SimpleStringProperty(""+xx.format(arg0.getValue().getMonto()) );
-					     }
-				});        
-					
-					tvatpTabla.setColumnResizePolicy(tvatpTabla.UNCONSTRAINED_RESIZE_POLICY);	
-					    
-					try{			
-						Session sesion1 = openSesion();	
-						//------------- CARGA DE TARIFA				
-						queryResultTarifa = sesion1.createQuery("from Tarifa");	
-						TarifaList = FXCollections.observableArrayList(queryResultTarifa.list());
-						MapTarifa = new LinkedHashMap<String, Integer>();
-						opcionTarifa = FXCollections.observableArrayList();
-						for (int r=0;r<TarifaList.size();r++){
-							MapTarifa.put(TarifaList.get(r).getDescripcion(),TarifaList.get(r).getCodigo());
-							opcionTarifa.add(TarifaList.get(r).getDescripcion());
-						}
-						
-						cbatpTarifa.setItems(opcionTarifa);
-						closeSesion(sesion1);
-
-					}catch(HibernateException e){
-						e.printStackTrace();
-					}
-					
-					cbatpTarifa.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-						@Override
-						public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-							System.out.println(" holahola " + opcionTarifa.get(arg2.intValue()));
-							
-							tarifaSeleccionada = opcionTarifa.get(arg2.intValue());
-							System.out.println(" - - - - - - --- - - - - - - - - - - - - - - - - - - ");
-							System.out.println("tarifa seleccionada:   "+tarifaSeleccionada+ " desde el hlm: " + MapTarifa.get(tarifaSeleccionada));
-							latpMsj.setVisible(false);				batpMas.setDisable(false);
-							tfatpPrecio.setDisable(false);				cbatpPeso.setDisable(false);
-							cargaPeso();	bandTarifa=true;		tfatpPrecio.setText("");
-							
-							if (bandTarifa){
-								try{							
-									itemsPrecioTarifa.clear();
-									final Session sesion2 = openSesion();
-									
-									queryResultPrecioTarifa = sesion2.createQuery("from PrecioTarifa where codTarifa = :cd");
-									queryResultPrecioTarifa.setInteger("cd", TarifaList.get(arg2.intValue()).getCodigo() );
-									
-									itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());
-									
-									if (itemsPrecioTarifa.isEmpty())
-										System.out.println("es null");
-									
-									tvatpTabla.setItems(itemsPrecioTarifa);
-									
-									closeSesion(sesion2);
-								}catch(HibernateException e){
-									e.printStackTrace();
-								}
-							}
-					}});
-
-					tfatpPrecio.textProperty().addListener(new ChangeListener<String>() {
-					    @Override
-					    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-					    	bandPrecio = true;
-					    	if (tfatpPrecio.getText().compareTo("")==0)
-					    		bandPrecio = false;
-					    	cbatpTarifa.setDisable(true); cbatpTarifa.setOpacity(1);
-					    	latpMsj.setVisible(false);		
-					    }
-					});
-					
-					tvatpTabla.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PrecioTarifa>(){
-						@Override
-						public void changed(ObservableValue<? extends PrecioTarifa> arg0, PrecioTarifa arg1, PrecioTarifa arg2) {
-							
-							if (!itemsPrecioTarifa.isEmpty()){															
-								latpCodigo.setText(String.valueOf(arg2.getCodigo()));
-								for (int y=0;y<itemsPrecioTarifa.size();y++){
-									if (latpCodigo.getText().compareTo(String.valueOf(itemsPrecioTarifa.get(y).getCodigo())) == 0){
-										posedit=y;
-									}
-								}
-								// cargar el combobox de peso segun el registro seleccionado para actualizar
-								
-								opcionPeso=null;    opcionPeso=FXCollections.observableArrayList();	
-								opcionPeso.add(arg2.getPesoTarifa().toString());
-								cbatpPeso.setItems(opcionPeso);
-								cbatpPeso.setDisable(true); cbatpPeso.setOpacity(1);	
-								cbatpPeso.getSelectionModel().select(arg2.getPesoTarifa().toString());
-								
-								cbatpTarifa.setDisable(true); cbatpTarifa.setOpacity(1);
-								System.out.println("Precio del registro: "+ arg2.getMonto());
-								tfatpPrecio.setVisible(true);
-								tfatpPrecio.setText(String.valueOf(arg2.getMonto()));
-								
-								batpMas.setVisible(false);
-								batpEditar.setDisable(false);
-								batpMenos.setDisable(false);
-							}			
-						}
-					});		
-
-					tfatpPrecio.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));		
-
+				if (arg2.getText().equals("Unidad")){					
+					contenidoUnidad();					
+				}else if (arg2.getText().equals("Tarifa")){				
+					contenidoTarifa();				
+				}else if (arg2.getText().equals("Peso")){					
+					contenidoPeso();
+				}else if (arg2.getText().equals("Variable")){					
+					contenidoVariable();						
+				}else if (arg2.getText().equals("Cuidad Destino")){					
+					contenidoCiudadDestino();
+				}else if (arg2.getText().equals("Tipo Embalaje")){					
+					contenidoTipoEmbalaje();				
+				}else if (arg2.getText().equals("Asociar Tarifa/Peso")){					
+					contenidoAsociarTarifaPeso();
 				}else if (arg2.getText().equals("Ipostel")){
-					
-					Session sesion1 = openSesion();
-					queryResultUnidad = sesion1.createQuery("from Unidad where factor <= 1");
-					UnidadList = FXCollections.observableArrayList(queryResultUnidad.list());
-					for (int r=0;r<UnidadList.size();r++){
-						opcionUnidad.add(UnidadList.get(r).getDescripcion());
-					}
-					
-					cbiUnidad.setItems(opcionUnidad);
-					cbiUnidad.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-						@Override
-						public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-							System.out.println(opcionUnidad.get(arg2.intValue()));
-							bandUnidad=true;
-							liAlerta.setVisible(false);
-					}});
-					
-					tfiDesde.lengthProperty().addListener(new ChangeListener<Number>(){
-					     @Override
-					     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
-					    	 bandDesde = true;     liAlerta.setVisible(false);
-					    	 System.out.println("idEditar desde tfdesde: "+idEditar);
-					}});
-					
-					tfiHasta.lengthProperty().addListener(new ChangeListener<Number>(){
-					     @Override
-					     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
-					    	 bandHasta = true;
-						     liAlerta.setVisible(false);
-						     System.out.println("idEditar desde tfhasta: "+idEditar);	
-					}});
-					
-					tfiDesde.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
-					tfiHasta.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
-					
-					queryResultTabla = sesion1.createQuery("from Ipostel");
-					itemsIpostel = FXCollections.observableArrayList(queryResultTabla.list()); 
-					tviTablaIpostel.setItems(itemsIpostel);
-					closeSesion(sesion1);
-					tviTablaIpostel.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Ipostel>(){
-						@Override
-						public void changed(ObservableValue<? extends Ipostel> arg0, Ipostel arg1,Ipostel arg2) {
-								biMas.setDisable(true);
-								biEditar.setDisable(false);
-								if (arg2 != null){
-									System.out.println("Opción de tabla seleccionada arg2: "+arg2.getDesde()+" "+arg2.getHasta()+" "+arg2.getValor()+" "+arg2.getUndMedida().getDescripcion());
-									tfiDesde.setText(String.valueOf(arg2.getDesde()));
-									tfiHasta.setText(String.valueOf(arg2.getHasta()));
-									tfiMonto.setText(String.valueOf(arg2.getValor()));
-									idEditar = arg2.getCodigo();
-									
-									for (int d=0;d<UnidadList.size();d++){
-										if (UnidadList.get(d).getCodigo() == arg2.getUndMedida().getCodigo()){
-											cbiUnidad.getSelectionModel().select(d);
-											break;
-										}
-									}
-									
-									for (int d=0;d<itemsIpostel.size();d++){
-										if (itemsIpostel.get(d).getCodigo() == arg2.getCodigo())
-											posEditar=d;
-									}
-								}
-						}			
-					});		
-					
-					tciRangoPesoI.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ipostel, String>, ObservableValue<String>>(){
-						@Override
-						public ObservableValue<String> call(CellDataFeatures<Ipostel, String> arg0) {
-							return new SimpleStringProperty(""+arg0.getValue().getDesde()+"-"+arg0.getValue().getHasta());
-						}			
-					});
-				
-					tciValorI.setCellValueFactory(new PropertyValueFactory<Ipostel,String>("Valor"));		
-					
-					tciUnidadI.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ipostel, String>, ObservableValue<String>>(){
-						@Override
-						public ObservableValue<String> call(CellDataFeatures<Ipostel, String> arg0) {
-							return new SimpleStringProperty(""+arg0.getValue().getUndMedida().getDescripcion());
-						}			
-					});
-				
-					tviTablaIpostel.setColumnResizePolicy(tviTablaIpostel.UNCONSTRAINED_RESIZE_POLICY);
-									
+					contenidoIpostel();
 				}else if (arg2.getText().equals("Detalle Variable")){
-					
-					bdvAceptar.setDisable(false);
-					dp = new DatePicker();
-					dp.setDateFormat( new SimpleDateFormat("dd-MM-yyyy"));
-					//la propiedad de la show weeks false
-					
-					dp.setStyle("/application/DatePicker.css");
-					gpdvFecha.add(dp,0,0);
-					
-//					DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
-//					simbolos.setDecimalSeparator('.');
-//					final DecimalFormat decimalFormat = new DecimalFormat("##.00",simbolos);
-					
-					try{			
-						Session sesion1 = openSesion();
-						queryResultTipoVariable = null;						
-						TipoVariableList = null;	opcionTipoVariable.clear();
-						cbdvTipoVariable.setItems(opcionTipoVariable);
-						queryResultTipoVariable = sesion1.createQuery("from VariableConfiguracion");
-						TipoVariableList = FXCollections.observableArrayList(queryResultTipoVariable.list());
-						
-						for (int r=0;r<TipoVariableList.size();r++)
-							opcionTipoVariable.add(TipoVariableList.get(r).getNombre());
-						
-						cbdvTipoVariable.setItems(opcionTipoVariable);
-						cbdvTipoVariable.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-							@Override
-							public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-								ldvAlerta.setVisible(false);
-								System.out.println(opcionTipoVariable.get(arg2.intValue()));				
-						}});
-						closeSesion(sesion1);
-					}catch(HibernateException e){
-						e.printStackTrace();
-					}
-					
-					tfdvValorVariable.setOnAction(new EventHandler(){
-						@Override
-						public void handle(Event arg0) {
-							tfdvValorVariable.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
-//							http://code.makery.ch/blog/javafx-8-event-handling-examples/				
-						}});
-					
-//					tfValorVariable.setOnAction((event) -> {
-//						outputTextArea.appendText("TextField Action\n");
-//					});
-					
-					tfdvValorVariable.textProperty().addListener(new ChangeListener<String>(){
-						 @Override
-						    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {				 
-							 	
-							 ldvAlerta.setVisible(false);
-							 if (tfdvValorVariable.getText().equals("")){
-									 bandValorVariable=false;
-									 bdvAceptar.setDisable(true);	
-									 bandPuntoDecimal=false;
-									 v = null;
-							 }else{
-								 bandValorVariable=true;			 
-									
-								 if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato)
-									bdvAceptar.setDisable(false);
-							}												 
-					}});	
-					
-					cbdvTipoVariable.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-						@Override
-						public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {		
-							bandTipoVariable = true;	
-							posTipoVariable=arg2.intValue();
-							if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato){
-								 System.out.println("activo en cbtv");					
-								 bdvAceptar.setDisable(false);
-			          		}
-							if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
-								 tfdvValorVariable.setDisable(false);
-								 tfdvValorVariable.setOpacity(1);
-			       		    }				
-					}});
-					
-					cbdvTipoValor.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
-						@Override
-						public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {		
-							ldvAlerta.setVisible(false);
-							bandTipoDato = true;
-							bandPuntoDecimal=false;
-							tfdvValorVariable.setText("");
-							if (arg2.intValue() == 0){
-								System.out.println("Monto: ");
-//								asignarTipoMonto();
-							}else if (arg2.intValue() == 1){
-								System.out.println("Porcentaje: ");
-//								asignarTipoPorcentaje();
-							}
-							 
-							if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato){
-								 System.out.println("activo en cb td");
-								 bdvAceptar.setDisable(false);
-			         		 }
-							if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
-								 tfdvValorVariable.setDisable(false);
-			 					 tfdvValorVariable.setOpacity(1);
-			        		 }
-					}});
-				
-//					dpFechaVigencia.setOnAction(new EventHandler(){
-//						@Override
-//						public void handle(Event arg0) {
-//							lAlerta.setVisible(false);
-//							System.out.println("texto en fechaaaa  "+dpFechaVigencia.getValue());
-//							
-//							if (dpFechaVigencia.getValue()!=null)
-//								bandFechaVigencia=true;
-//							else
-//								bandFechaVigencia=false;
-//							
-//							if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
-//								 tfValorVariable.setDisable(false);
-//								 tfValorVariable.setOpacity(1);
-//							}else{
-//								 tfValorVariable.setDisable(true);
-//								 tfValorVariable.setOpacity(0.5);
-//							}					
-//						}});
-					
-					if (bandTipoDato)
-						if (cbdvTipoValor.getSelectionModel().getSelectedItem().toString().equals("Monto")){
-							asignarTipoMonto();
-							System.out.println("undi montoooooooooooooooooooooooo");	
-						}else if (cbdvTipoValor.getSelectionModel().getSelectedItem().toString().equals("Porcentaje")){
-							asignarTipoPorcentaje();
-							System.out.println("undi porcentajeeeeeeeeeeeeeee");
-						}
-					
+					contenidoDetalleVariable();
 				}
 	       	}
 		});
 	}
 	
 //	Pestaña Unidad
+	
+	public void contenidoUnidad(){
+		System.out.println("estoy en unidad");	
+		tfuUnidad.setText("");tfuFactor.setText("");
+		tfuUnidad.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	luAlerta.setVisible(false);
+		    }
+		});
+		tfuFactor.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	luAlerta.setVisible(false);
+		    }
+		});
+	}
 	@FXML
 	public void actionUnidadAceptar(){
 		System.out.println("boton aceptar unidad");
@@ -678,6 +235,17 @@ public class ConfigPestController {
 //	Fin Pestaña Unidad
 	
 //	Pestaña Tarifa
+	
+	public void contenidoTarifa(){
+		System.out.println("estoy en tarifa");		
+		tftTarifa.setText("");
+		tftTarifa.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	ltAlerta.setVisible(false);
+		    }
+		});
+	}	
 	@FXML
 	public void actionTarifaAceptar(){
 		System.out.println("boton aceptar tarifa");
@@ -696,6 +264,15 @@ public class ConfigPestController {
 //	Fin Pestaña Tarifa	
 	
 //	Pestaña Variable
+	public void contenidoVariable(){
+		tfvVariable.setText("");
+		tfvVariable.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	lvAlerta.setVisible(false);
+		    }
+		});	
+	}
 	@FXML
 	public void actionVariableAceptar(){
 		System.out.println("boton aceptar variable");
@@ -736,9 +313,20 @@ public class ConfigPestController {
 //	Fin Pestaña Variable
 	
 //	Pestaña Ciudad Destino
+	
+	public void contenidoCiudadDestino(){
+		tfcdCiudadDestino.setText("");
+		tfcdCiudadDestino.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	lcdAlerta.setVisible(false);
+		    }
+		});	
+	}
 	@FXML
 	public void actionCiudadDestinoAceptar(){
 		System.out.println("boton aceptar ciudad destino");
+		tfcdCiudadDestino.setText("");
 		if (tfcdCiudadDestino.getText().compareTo("") != 0){
 			Session sesion = openSesion();		
 			CiudadDestino objCiudadDestino = new CiudadDestino();
@@ -754,6 +342,15 @@ public class ConfigPestController {
 //	Fin Pestaña Ciudad Destino
 	
 //	Pestaña Tipo Embalaje
+	public void contenidoTipoEmbalaje(){
+		tfteTipoEmbalaje.setText("");
+		tfteTipoEmbalaje.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	lteAlerta.setVisible(false);
+		    }
+		});
+	}	
 	@FXML
 	public void actionTipoEmbalajeAceptar(){
 		System.out.println("boton aceptar tipo embalaje");
@@ -771,7 +368,134 @@ public class ConfigPestController {
 	}
 //	Fin Pestaña Tipo Embalaje
 	
-//	Pestaña Asociar Tarifa/Peso
+//	Pestaña Asociar Tarifa/Peso	
+	public void contenidoAsociarTarifaPeso(){
+		System.out.println("estoy en asociar tarifa/peso");		
+		tfatpPrecio.setText("");
+		itemsPrecioTarifa.clear();
+		tvatpTabla.setItems(itemsPrecioTarifa);
+		tcatpTarifa.setCellValueFactory(new PropertyValueFactory<PrecioTarifa,String>("tarifa"));
+		tcatpPeso.setCellValueFactory(new PropertyValueFactory<PrecioTarifa,String>("PesoTarifa"));
+		
+		tcatpUnidad.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PrecioTarifa, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<PrecioTarifa, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getPesoTarifa().getUndMedida().getDescripcion());
+			}			
+		});	
+		
+		tcatpMonto.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PrecioTarifa,String>, ObservableValue<String>>(){
+		     @Override
+		     public ObservableValue<String> call(CellDataFeatures<PrecioTarifa,String> arg0) {
+		      // TODO Auto-generated method stub
+		      DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+		 	  simbolos.setDecimalSeparator('.');
+		      DecimalFormat xx = new DecimalFormat("##.00",simbolos);
+		      return new SimpleStringProperty(""+xx.format(arg0.getValue().getMonto()) );
+		     }
+	});        
+		
+		tvatpTabla.setColumnResizePolicy(tvatpTabla.UNCONSTRAINED_RESIZE_POLICY);	
+		    
+		try{		
+			//------------- CARGA DE TARIFA				
+			queryResultTarifa=null; TarifaList=null; opcionTarifa.clear();
+			cbatpTarifa.setItems(opcionTarifa);
+			Session sesion1 = openSesion();	
+			queryResultTarifa = sesion1.createQuery("from Tarifa");	
+			TarifaList = FXCollections.observableArrayList(queryResultTarifa.list());
+			MapTarifa = new LinkedHashMap<String, Integer>();
+			opcionTarifa = FXCollections.observableArrayList();
+			for (int r=0;r<TarifaList.size();r++){
+				MapTarifa.put(TarifaList.get(r).getDescripcion(),TarifaList.get(r).getCodigo());
+				opcionTarifa.add(TarifaList.get(r).getDescripcion());
+			}
+			
+			cbatpTarifa.setItems(opcionTarifa);
+			closeSesion(sesion1);
+
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}
+		
+		cbatpTarifa.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				
+				if (!opcionTarifa.isEmpty()){
+					System.out.println(" holahola " + opcionTarifa.get(arg2.intValue()));				
+					tarifaSeleccionada = opcionTarifa.get(arg2.intValue());
+				}
+				System.out.println(" - - - - - - --- - - - - - - - - - - - - - - - - - - ");
+				System.out.println("tarifa seleccionada:   "+tarifaSeleccionada+ " desde el hlm: " + MapTarifa.get(tarifaSeleccionada));
+				latpMsj.setVisible(false);				batpMas.setDisable(false);
+				tfatpPrecio.setDisable(false);				cbatpPeso.setDisable(false);
+				cargaPeso();	bandTarifa=true;		tfatpPrecio.setText("");
+				
+				if ((bandTarifa) && (arg2.intValue() != -1)){
+					try{							
+						itemsPrecioTarifa.clear();
+						Session sesion1 = openSesion();
+						queryResultPrecioTarifa = sesion1.createQuery("from PrecioTarifa where codTarifa = :cd");
+						queryResultPrecioTarifa.setInteger("cd", TarifaList.get(arg2.intValue()).getCodigo() );						
+						itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());
+						
+						if (itemsPrecioTarifa.isEmpty())
+							System.out.println("es null");
+						
+						tvatpTabla.setItems(itemsPrecioTarifa);
+						closeSesion(sesion1);
+					}catch(HibernateException e){
+						e.printStackTrace();
+					}
+				}
+		}});
+		
+		tfatpPrecio.textProperty().addListener(new ChangeListener<String>() {
+		    @Override
+		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
+		    	bandPrecio = true;
+		    	if (tfatpPrecio.getText().compareTo("")==0)
+		    		bandPrecio = false;
+		    	cbatpTarifa.setDisable(true); cbatpTarifa.setOpacity(1);
+		    	latpMsj.setVisible(false);		
+		    }
+		});
+		
+		tvatpTabla.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PrecioTarifa>(){
+			@Override
+			public void changed(ObservableValue<? extends PrecioTarifa> arg0, PrecioTarifa arg1, PrecioTarifa arg2) {
+				
+				if (!itemsPrecioTarifa.isEmpty()){															
+					latpCodigo.setText(String.valueOf(arg2.getCodigo()));
+					for (int y=0;y<itemsPrecioTarifa.size();y++){
+						if (latpCodigo.getText().compareTo(String.valueOf(itemsPrecioTarifa.get(y).getCodigo())) == 0){
+							posedit=y;
+						}
+					}
+					// cargar el combobox de peso segun el registro seleccionado para actualizar															
+					opcionPeso=null;    opcionPeso=FXCollections.observableArrayList();	
+					opcionPeso.add(arg2.getPesoTarifa().toString());
+					cbatpPeso.setItems(opcionPeso);
+					cbatpPeso.setDisable(true); cbatpPeso.setOpacity(1);	
+					cbatpPeso.getSelectionModel().select(arg2.getPesoTarifa().toString());
+					
+					cbatpTarifa.setDisable(true); cbatpTarifa.setOpacity(1);
+					System.out.println("Precio del registro: "+ arg2.getMonto());
+					tfatpPrecio.setVisible(true);
+					tfatpPrecio.setText(String.valueOf(arg2.getMonto()));
+					
+					batpMas.setVisible(false);
+					batpEditar.setDisable(false);
+					batpMenos.setDisable(false);
+				}			
+			}
+		});		
+		
+		tfatpPrecio.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));		
+
+	}
+	
 	private void cargaPeso(){
 		System.out.println("Carga peso");
 		System.out.println(MapTarifa.get(tarifaSeleccionada));
@@ -836,10 +560,10 @@ public class ConfigPestController {
 		
 		PrecioTarifa objpf = new PrecioTarifa();
 		PesoTarifa objPeso;
-				
+		
 		try{
 			itemsPrecioTarifa.clear();
-			Session sesion1 = openSesion();			
+			Session sesion1 = openSesion();	
 			queryResultPrecioTarifa = sesion1.createQuery("from PrecioTarifa where codTarifa = :ct and codPesoTarifa = :cpt");
 			System.out.println("tarifa seleccionada:  "+ TarifaList.get(cbatpTarifa.getSelectionModel().getSelectedIndex()).getCodigo()  );
 			System.out.println("peso seleccionado codigo:  "+  MapPeso.get(cbatpPeso.getSelectionModel().getSelectedItem().toString()));
@@ -849,16 +573,21 @@ public class ConfigPestController {
 			queryResultPrecioTarifa.setInteger("cpt", MapPeso.get(cbatpPeso.getSelectionModel().getSelectedItem().toString()));				
 			itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());
 			
-			System.out.println("cuando no hay nada:  "+itemsPrecioTarifa.isEmpty() + " / size: " +itemsPrecioTarifa.size());	
-			if (itemsPrecioTarifa.isEmpty()){
+			System.out.println("cuando no hay nada:  "+itemsPrecioTarifa.isEmpty() + " / size: " +itemsPrecioTarifa.size());
+			
+			if (itemsPrecioTarifa.isEmpty()){				
 				//Consulta para traer de tabla peso, el objeto segun el codigo que esta en Map de Peso
-				queryUnicoPeso = sesion1.createQuery("from PesoTarifa where codigo = :codp");
-				queryUnicoPeso.setInteger("codp", MapPeso.get(cbatpPeso.getSelectionModel().getSelectedItem().toString()));
-				queryUnicoPeso.setMaxResults(1);
+				if (!MapPeso.isEmpty()){
+					queryUnicoPeso = sesion1.createQuery("from PesoTarifa where codigo = :codp");
+					queryUnicoPeso.setInteger("codp", MapPeso.get(cbatpPeso.getSelectionModel().getSelectedItem().toString()));
+					queryUnicoPeso.setMaxResults(1);
+				}
 				objPeso = new PesoTarifa();
 				objPeso = (PesoTarifa) queryUnicoPeso.uniqueResult();
 								
-				objpf.setTarifa(TarifaList.get(cbatpTarifa.getSelectionModel().getSelectedIndex()));
+				if (!TarifaList.isEmpty())
+					objpf.setTarifa(TarifaList.get(cbatpTarifa.getSelectionModel().getSelectedIndex()));
+				
 				objpf.setPesoTarifa(objPeso);
 				objpf.setMonto(Double.parseDouble(tfatpPrecio.getText()));
 				sesion1.save(objpf);
@@ -868,7 +597,7 @@ public class ConfigPestController {
 				queryResultPrecioTarifa = sesion1.createQuery("from PrecioTarifa where codTarifa = :ct");
 				queryResultPrecioTarifa.setInteger("ct", TarifaList.get(cbatpTarifa.getSelectionModel().getSelectedIndex()).getCodigo());
 				itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());
-				
+				closeSesion(sesion1);
 				System.out.println("tamaño para la tabla " + itemsPrecioTarifa.size());
 				tvatpTabla.setItems(itemsPrecioTarifa);
 				
@@ -876,12 +605,11 @@ public class ConfigPestController {
 				latpMsj.setVisible(true);
 				latpMsj.setText("Relación tarifa y precios existentes");
 			}	
-			
-			closeSesion(sesion1);
 		}catch(HibernateException e){
 			e.printStackTrace();
 		}			
 		cargaPeso();
+		
 		tfatpPrecio.setText("");
 		cbatpTarifa.setDisable(false); cbatpTarifa.setOpacity(1);	
 	}
@@ -890,10 +618,10 @@ public class ConfigPestController {
 	private void actionatpBotonMenos(){
 		System.out.println("menos " + latpCodigo.getText() + "   " + cbatpTarifa.getSelectionModel().getSelectedIndex());
 		PrecioTarifa objpf;
+		
 		try{
-			itemsPrecioTarifa.clear();
 			Session sesion1 = openSesion();
-					
+			itemsPrecioTarifa.clear();							
 			queryResultPrecioTarifa = sesion1.createQuery("from PrecioTarifa where codigo = :codt");
 			queryResultPrecioTarifa.setInteger("codt", Integer.parseInt(latpCodigo.getText()) );
 			queryResultPrecioTarifa.setMaxResults(1);
@@ -908,13 +636,14 @@ public class ConfigPestController {
 			queryResultPrecioTarifa.setInteger("ct", TarifaList.get(cbatpTarifa.getSelectionModel().getSelectedIndex()).getCodigo() );
 			itemsPrecioTarifa = FXCollections.observableArrayList(queryResultPrecioTarifa.list());					
 			tvatpTabla.setItems(itemsPrecioTarifa);
-			
-			tfatpPrecio.setText("");			
 			closeSesion(sesion1);
+			tfatpPrecio.setText("");			
+			
 		}catch(HibernateException e){
 			e.printStackTrace();
 		}		
 		batpMas.setVisible(true);
+		cbatpTarifa.setDisable(false);
 		cargaPeso();
 	}
 	
@@ -922,32 +651,120 @@ public class ConfigPestController {
 	private void actionatpBotonEditar(){
 		bandEditar = true;
 		PrecioTarifa objpf;
-		
+			
 		try{
-			Session sesion1 = openSesion();		
+			Session sesion1 = openSesion();
 			objpf = (PrecioTarifa) sesion1.get(PrecioTarifa.class, Integer.parseInt(latpCodigo.getText()));
 			objpf.setMonto(Double.parseDouble(tfatpPrecio.getText()));
 			sesion1.update(objpf);		
-			
+			closeSesion(sesion1);
 			latpMsj.setText("Registro actualizado exitosamente");
 			latpMsj.setVisible(true);	
 			
 			itemsPrecioTarifa.set(posedit, objpf);			
-			tvatpTabla.setItems(itemsPrecioTarifa);
-			
-			closeSesion(sesion1);
+			tvatpTabla.setItems(itemsPrecioTarifa);			
 		}catch(HibernateException e){
 			e.printStackTrace();
 		}	
 		tfatpPrecio.setText("");
 		cbatpTarifa.setDisable(false); cbatpTarifa.setOpacity(1);
 		batpMas.setDisable(false); batpMas.setVisible(true); batpMas.setOpacity(1);
+		
+		
 		cargaPeso();
 		cbatpPeso.setDisable(false); cbatpPeso.setOpacity(1);
 	}
 //	Fin
 	
 //	Pestaña Peso
+	
+	public void contenidoPeso(){
+		Session sesion1 = openSesion();		
+		tfpDesde.setText(""); tfpHasta.setText("");
+		queryResultUnidad = null; UnidadList = null; opcionUnidad.clear();
+		cbpUnidad.setItems(opcionUnidad);
+		queryResultUnidad = sesion1.createQuery("from Unidad");
+		UnidadList = FXCollections.observableArrayList(queryResultUnidad.list());
+		for (int r=0;r<UnidadList.size();r++){
+			opcionUnidad.add(UnidadList.get(r).getDescripcion());
+		}
+		
+		cbpUnidad.setItems(opcionUnidad);
+		cbpUnidad.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				
+				if (!opcionUnidad.isEmpty())
+					System.out.println(opcionUnidad.get(arg2.intValue()));
+				
+				bandUnidad=true;
+				lpAlerta.setVisible(false);
+		}});
+		
+		tfpDesde.lengthProperty().addListener(new ChangeListener<Number>(){
+		     @Override
+		     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
+		    	 bandDesde = true;     lpAlerta.setVisible(false);
+		    	 System.out.println("idEditar desde tfdesde: "+idEditar);
+		}});
+		
+		tfpHasta.lengthProperty().addListener(new ChangeListener<Number>(){
+		     @Override
+		     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
+		    	 bandHasta = true;
+			     lpAlerta.setVisible(false);
+			     System.out.println("idEditar desde tfhasta: "+idEditar);	
+		}});		
+		
+		
+		tcpRangoPesoPT.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PesoTarifa, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<PesoTarifa, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getDesde()+"-"+arg0.getValue().getHasta());
+			}			
+		});
+		
+		tcpUnidadPT.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<PesoTarifa, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<PesoTarifa, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getUndMedida().getDescripcion());
+			}			
+		});
+		
+		tvpTablaPT.setColumnResizePolicy(tvpTablaPT.UNCONSTRAINED_RESIZE_POLICY);	
+		tvpTablaPT.setVisible(true);
+		queryResultTabla = sesion1.createQuery("from PesoTarifa");
+		itemsPesoTarifa = FXCollections.observableArrayList(queryResultTabla.list()); 
+		tvpTablaPT.setItems(itemsPesoTarifa);
+		tvpTablaPT.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PesoTarifa>(){
+			@Override
+			public void changed(ObservableValue<? extends PesoTarifa> arg0, PesoTarifa arg1,PesoTarifa arg2) {
+					bpMas.setDisable(true);	
+					bpEditar.setDisable(false);
+					if (arg2 != null){
+						System.out.println("Opción de tabla seleccionada arg2: "+arg2.getDesde()+" "+arg2.getHasta()+" "+arg2.getUndMedida().getDescripcion());
+						tfpDesde.setText(String.valueOf(arg2.getDesde()));
+						tfpHasta.setText(String.valueOf(arg2.getHasta()));
+						idEditar = arg2.getCodigo();
+						
+						for (int d=0;d<UnidadList.size();d++){
+							if (UnidadList.get(d).getCodigo() == arg2.getUndMedida().getCodigo()){
+								cbpUnidad.getSelectionModel().select(d);
+								break;
+							}
+						}	
+						
+						for (int d=0;d<itemsPesoTarifa.size();d++){
+							if (itemsPesoTarifa.get(d).getCodigo() == arg2.getCodigo())
+								posEditar=d;
+						}
+					}
+			}			
+		});	
+		closeSesion(sesion1);
+		tfpDesde.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
+		tfpHasta.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));	
+	}
 	
 	@FXML
 	private void actionpBotonMas(){
@@ -1027,9 +844,101 @@ public class ConfigPestController {
 
 		closeSesion(sesion1);
 	}
-// 	Fin Peso
-	
+// 	Fin Peso	
+
 //	Pestaña Ipostel
+	public void contenidoIpostel(){
+		queryResultUnidad = null; UnidadList = null;  opcionUnidad.clear();
+		cbiUnidad.setItems(opcionUnidad);
+		tfiDesde.setText("");tfiHasta.setText("");tfiMonto.setText("");
+		
+		Session sesion1 = openSesion();
+		queryResultUnidad = sesion1.createQuery("from Unidad where factor <= 1");
+		
+		UnidadList = FXCollections.observableArrayList(queryResultUnidad.list());
+		for (int r=0;r<UnidadList.size();r++){
+			opcionUnidad.add(UnidadList.get(r).getDescripcion());
+		}
+		
+		cbiUnidad.setItems(opcionUnidad);
+		cbiUnidad.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				
+				if (!opcionUnidad.isEmpty())
+					System.out.println(opcionUnidad.get(arg2.intValue()));
+				
+				bandUnidad=true;
+				liAlerta.setVisible(false);
+		}});
+		
+		tfiDesde.lengthProperty().addListener(new ChangeListener<Number>(){
+		     @Override
+		     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
+		    	 bandDesde = true;     liAlerta.setVisible(false);
+		    	 System.out.println("idEditar desde tfdesde: "+idEditar);
+		}});
+		
+		tfiHasta.lengthProperty().addListener(new ChangeListener<Number>(){
+		     @Override
+		     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {	           
+		    	 bandHasta = true;
+			     liAlerta.setVisible(false);
+			     System.out.println("idEditar desde tfhasta: "+idEditar);	
+		}});
+		
+		tfiDesde.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
+		tfiHasta.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(10));
+		
+		queryResultTabla = sesion1.createQuery("from Ipostel");
+		itemsIpostel = FXCollections.observableArrayList(queryResultTabla.list()); 
+		tviTablaIpostel.setItems(itemsIpostel);
+		closeSesion(sesion1);
+		tviTablaIpostel.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Ipostel>(){
+			@Override
+			public void changed(ObservableValue<? extends Ipostel> arg0, Ipostel arg1,Ipostel arg2) {
+					biMas.setDisable(true);
+					biEditar.setDisable(false);
+					if (arg2 != null){
+						System.out.println("Opción de tabla seleccionada arg2: "+arg2.getDesde()+" "+arg2.getHasta()+" "+arg2.getValor()+" "+arg2.getUndMedida().getDescripcion());
+						tfiDesde.setText(String.valueOf(arg2.getDesde()));
+						tfiHasta.setText(String.valueOf(arg2.getHasta()));
+						tfiMonto.setText(String.valueOf(arg2.getValor()));
+						idEditar = arg2.getCodigo();
+						
+						for (int d=0;d<UnidadList.size();d++){
+							if (UnidadList.get(d).getCodigo() == arg2.getUndMedida().getCodigo()){
+								cbiUnidad.getSelectionModel().select(d);
+								break;
+							}
+						}
+						
+						for (int d=0;d<itemsIpostel.size();d++){
+							if (itemsIpostel.get(d).getCodigo() == arg2.getCodigo())
+								posEditar=d;
+						}
+					}
+			}			
+		});		
+		
+		tciRangoPesoI.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ipostel, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<Ipostel, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getDesde()+"-"+arg0.getValue().getHasta());
+			}			
+		});
+	
+		tciValorI.setCellValueFactory(new PropertyValueFactory<Ipostel,String>("Valor"));		
+		
+		tciUnidadI.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Ipostel, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<Ipostel, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getUndMedida().getDescripcion());
+			}			
+		});
+	
+		tviTablaIpostel.setColumnResizePolicy(tviTablaIpostel.UNCONSTRAINED_RESIZE_POLICY);		
+	}	
 	@FXML
 	private void actioniBotonMenos(){
 		try{
@@ -1113,6 +1022,139 @@ public class ConfigPestController {
 //	Fin Pestaña Ipostel
 	
 //	Pestaña Detalle Variable
+	
+	public void contenidoDetalleVariable(){
+		bdvAceptar.setDisable(false);
+		dp = new DatePicker();
+		tfdvValorVariable.setText("");;
+		dp.setDateFormat( new SimpleDateFormat("dd-MM-yyyy"));
+		//la propiedad de la show weeks false
+		
+		dp.setStyle("/application/DatePicker.css");
+		gpdvFecha.add(dp,0,0);
+		
+//		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
+//		simbolos.setDecimalSeparator('.');
+//		final DecimalFormat decimalFormat = new DecimalFormat("##.00",simbolos);
+		
+		try{			
+			Session sesion1 = openSesion();
+			queryResultTipoVariable = null;						
+			TipoVariableList = null;	opcionTipoVariable.clear();
+			cbdvTipoVariable.setItems(opcionTipoVariable);
+			queryResultTipoVariable = sesion1.createQuery("from VariableConfiguracion");
+			TipoVariableList = FXCollections.observableArrayList(queryResultTipoVariable.list());
+			
+			for (int r=0;r<TipoVariableList.size();r++)
+				opcionTipoVariable.add(TipoVariableList.get(r).getNombre());
+			
+			cbdvTipoVariable.setItems(opcionTipoVariable);
+			cbdvTipoVariable.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					ldvAlerta.setVisible(false);
+					if (!opcionTipoVariable.isEmpty())
+						System.out.println(opcionTipoVariable.get(arg2.intValue()));				
+			}});
+			closeSesion(sesion1);
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}
+		
+		tfdvValorVariable.setOnAction(new EventHandler(){
+			@Override
+			public void handle(Event arg0) {
+				tfdvValorVariable.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
+//				http://code.makery.ch/blog/javafx-8-event-handling-examples/				
+			}});
+		
+		tfdvValorVariable.textProperty().addListener(new ChangeListener<String>(){
+			 @Override
+			    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {				 
+				 	
+				 ldvAlerta.setVisible(false);
+				 if (tfdvValorVariable.getText().equals("")){
+						 bandValorVariable=false;
+						 bdvAceptar.setDisable(true);	
+						 bandPuntoDecimal=false;
+						 v = null;
+				 }else{
+					 bandValorVariable=true;			 
+						
+					 if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato)
+						bdvAceptar.setDisable(false);
+				}												 
+		}});	
+		
+		cbdvTipoVariable.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {		
+				bandTipoVariable = true;	
+				posTipoVariable=arg2.intValue();
+				if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato){
+					 System.out.println("activo en cbtv");					
+					 bdvAceptar.setDisable(false);
+          		}
+				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
+					 tfdvValorVariable.setDisable(false);
+					 tfdvValorVariable.setOpacity(1);
+       		    }				
+		}});
+		
+		cbdvTipoValor.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {		
+				ldvAlerta.setVisible(false);
+				bandTipoDato = true;
+				bandPuntoDecimal=false;
+				tfdvValorVariable.setText("");
+				if (arg2.intValue() == 0){
+					System.out.println("Monto: ");
+//					asignarTipoMonto();
+				}else if (arg2.intValue() == 1){
+					System.out.println("Porcentaje: ");
+//					asignarTipoPorcentaje();
+				}
+				 
+				if (bandValorVariable && bandFechaVigencia && bandTipoVariable && bandTipoDato){
+					 System.out.println("activo en cb td");
+					 bdvAceptar.setDisable(false);
+         		 }
+				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
+					 tfdvValorVariable.setDisable(false);
+ 					 tfdvValorVariable.setOpacity(1);
+        		 }
+		}});
+	
+//		dpFechaVigencia.setOnAction(new EventHandler(){
+//			@Override
+//			public void handle(Event arg0) {
+//				lAlerta.setVisible(false);
+//				System.out.println("texto en fechaaaa  "+dpFechaVigencia.getValue());
+//				
+//				if (dpFechaVigencia.getValue()!=null)
+//					bandFechaVigencia=true;
+//				else
+//					bandFechaVigencia=false;
+//				
+//				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
+//					 tfValorVariable.setDisable(false);
+//					 tfValorVariable.setOpacity(1);
+//				}else{
+//					 tfValorVariable.setDisable(true);
+//					 tfValorVariable.setOpacity(0.5);
+//				}					
+//			}});
+		
+		if (bandTipoDato)
+			if (cbdvTipoValor.getSelectionModel().getSelectedItem().toString().equals("Monto")){
+				asignarTipoMonto();
+				System.out.println("undi monto");	
+			}else if (cbdvTipoValor.getSelectionModel().getSelectedItem().toString().equals("Porcentaje")){
+				asignarTipoPorcentaje();
+				System.out.println("undi porcentaje");
+			}
+	}
 	
 	@FXML
 	private void botondvActionAceptar(){

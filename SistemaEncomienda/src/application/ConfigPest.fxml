@@ -119,7 +119,7 @@
 	                <children>
 	                	<Label fx:id="lvAlerta" layoutX="120.0" layoutY="150.0" styleClass="labelrojo"  visible="false"/>                    
 	                    <Label fx:id="lvVariable" layoutX="15.0" layoutY="20.0" text="Variable" />
-	                    <TextField fx:id="tfvVariable" layoutX="60.0" layoutY="20.0" />
+	                    <TextField fx:id="tfvVariable" layoutX="90.0" layoutY="20.0" />
 	                    <Button fx:id="bvAceptar" onAction="#actionVariableAceptar" layoutX="20.0" layoutY="60.0" minHeight="23.0" minWidth="39.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="39.0">
 					      <graphic>
 					        <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
@@ -139,7 +139,7 @@
                 	<children>
                 		<Label fx:id="lcdAlerta" layoutX="120.0" layoutY="150.0" styleClass="labelrojo" visible="false"/>
 	                    <Label fx:id="lcdCiudadDestino" layoutX="15.0" layoutY="20.0" text="Ciudad Destino" />
-	                    <TextField fx:id="tfcdCiudadDestino" layoutX="60.0" layoutY="20.0" />
+	                    <TextField fx:id="tfcdCiudadDestino" layoutX="120.0" layoutY="20.0" />
 	                    <Button fx:id="bcdAceptar" onAction="#actionCiudadDestinoAceptar" layoutX="20.0" layoutY="100.0" minHeight="23.0" minWidth="39.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="39.0">
 					      <graphic>
 					        <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
@@ -159,7 +159,7 @@
                 	<children>
                 		<Label fx:id="lteAlerta" layoutX="120.0" layoutY="150.0" styleClass="labelrojo" visible="false"/>
 	                    <Label fx:id="lteTipoEmbalaje" layoutX="15.0" layoutY="20.0" text="Tipo embalaje" />
-	                    <TextField fx:id="tfteTipoEmbalaje" layoutX="60.0" layoutY="20.0" />	                    
+	                    <TextField fx:id="tfteTipoEmbalaje" layoutX="120.0" layoutY="20.0" />	                    
 	                    <Button fx:id="bteAceptar" onAction="#actionTipoEmbalajeAceptar" layoutX="20.0" layoutY="100.0" minHeight="23.0" minWidth="39.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="39.0">
 					      <graphic>
 					        <ImageView fitHeight="32.0" fitWidth="32.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true">
