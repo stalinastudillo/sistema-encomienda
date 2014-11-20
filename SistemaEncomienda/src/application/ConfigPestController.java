@@ -1037,7 +1037,6 @@ public class ConfigPestController {
 		System.out.println("fecha seleccionada:  "+dpFechaVigencia.getSelectedDate());
 		gpdvFecha.add(dpFechaVigencia,0,0);
 				
-		dpFechaVigencia.setOnKeyPressed(arg0);
 		
 //		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
 //		simbolos.setDecimalSeparator('.');
