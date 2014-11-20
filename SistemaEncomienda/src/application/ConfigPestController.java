@@ -27,6 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -40,6 +41,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 
@@ -151,7 +153,7 @@ public class ConfigPestController {
 //	Pestaña Detalle Variable
 	
 	@FXML	GridPane gpdvFecha;
-	DatePicker dp;
+	DatePicker dpFechaVigencia;
 	@FXML	Button bdvAceptar;
 	@FXML	Button bdvCancelar;
 	@FXML	ChoiceBox cbdvTipoVariable;
@@ -168,7 +170,7 @@ public class ConfigPestController {
 	@FXML
 	private void initialize(){
 		System.out.println("controlador de pestañas "+tabPane.getTabs().get(3).getText() );
-		
+		tfuFactor.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(8));
 		tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>(){
 	       	@Override
 			public void changed(ObservableValue<? extends Tab> arg0, Tab arg1, Tab arg2) {
@@ -195,7 +197,7 @@ public class ConfigPestController {
 					contenidoDetalleVariable();
 				}
 	       	}
-		});
+		});		
 	}
 	
 //	Pestaña Unidad
@@ -214,7 +216,7 @@ public class ConfigPestController {
 		    public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
 		    	luAlerta.setVisible(false);
 		    }
-		});
+		});		
 	}
 	@FXML
 	public void actionUnidadAceptar(){
@@ -326,7 +328,7 @@ public class ConfigPestController {
 	@FXML
 	public void actionCiudadDestinoAceptar(){
 		System.out.println("boton aceptar ciudad destino");
-		tfcdCiudadDestino.setText("");
+		
 		if (tfcdCiudadDestino.getText().compareTo("") != 0){
 			Session sesion = openSesion();		
 			CiudadDestino objCiudadDestino = new CiudadDestino();
@@ -336,8 +338,9 @@ public class ConfigPestController {
 			tfcdCiudadDestino.setText("");
 			lcdAlerta.setVisible(true);lcdAlerta.setText("Información ingresada exitosamente");
 		}else{
-			lcdAlerta.setVisible(true);lcdAlerta.setText("Debe ingresar la informaciÃ³n solicitada");
+			lcdAlerta.setVisible(true);lcdAlerta.setText("Debe ingresar la información solicitada");
 		}
+		tfcdCiudadDestino.setText("");
 	}
 //	Fin Pestaña Ciudad Destino
 	
@@ -363,7 +366,7 @@ public class ConfigPestController {
 			tfcdCiudadDestino.setText("");
 			lteAlerta.setVisible(true);lteAlerta.setText("Información ingresada exitosamente");
 		}else{
-			lteAlerta.setVisible(true);lteAlerta.setText("Debe ingresar la informaciÃ³n solicitada");
+			lteAlerta.setVisible(true);lteAlerta.setText("Debe ingresar la información solicitada");
 		}
 	}
 //	Fin Pestaña Tipo Embalaje
@@ -669,7 +672,6 @@ public class ConfigPestController {
 		tfatpPrecio.setText("");
 		cbatpTarifa.setDisable(false); cbatpTarifa.setOpacity(1);
 		batpMas.setDisable(false); batpMas.setVisible(true); batpMas.setOpacity(1);
-		
 		
 		cargaPeso();
 		cbatpPeso.setDisable(false); cbatpPeso.setOpacity(1);
@@ -1025,13 +1027,17 @@ public class ConfigPestController {
 	
 	public void contenidoDetalleVariable(){
 		bdvAceptar.setDisable(false);
-		dp = new DatePicker();
-		tfdvValorVariable.setText("");;
-		dp.setDateFormat( new SimpleDateFormat("dd-MM-yyyy"));
-		//la propiedad de la show weeks false
+		tfdvValorVariable.setText("");
 		
-		dp.setStyle("/application/DatePicker.css");
-		gpdvFecha.add(dp,0,0);
+		dpFechaVigencia = new DatePicker();		
+		dpFechaVigencia.setDateFormat( new SimpleDateFormat("dd-MM-yyyy"));
+		dpFechaVigencia.getCalendarView().setShowTodayButton(false);
+		dpFechaVigencia.getCalendarView().setShowWeeks(false);
+		dpFechaVigencia.getStylesheets().add(getClass().getResource("DatePicker.css").toExternalForm());		
+		System.out.println("fecha seleccionada:  "+dpFechaVigencia.getSelectedDate());
+		gpdvFecha.add(dpFechaVigencia,0,0);
+				
+		dpFechaVigencia.setOnKeyPressed(arg0);
 		
 //		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
 //		simbolos.setDecimalSeparator('.');
@@ -1057,9 +1063,7 @@ public class ConfigPestController {
 						System.out.println(opcionTipoVariable.get(arg2.intValue()));				
 			}});
 			closeSesion(sesion1);
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}
+		}catch(HibernateException e){	e.printStackTrace();	}
 		
 		tfdvValorVariable.setOnAction(new EventHandler(){
 			@Override
@@ -1098,7 +1102,8 @@ public class ConfigPestController {
 				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
 					 tfdvValorVariable.setDisable(false);
 					 tfdvValorVariable.setOpacity(1);
-       		    }				
+       		    }	
+				System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
 		}});
 		
 		cbdvTipoValor.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
@@ -1124,28 +1129,9 @@ public class ConfigPestController {
 					 tfdvValorVariable.setDisable(false);
  					 tfdvValorVariable.setOpacity(1);
         		 }
+				System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
 		}});
-	
-//		dpFechaVigencia.setOnAction(new EventHandler(){
-//			@Override
-//			public void handle(Event arg0) {
-//				lAlerta.setVisible(false);
-//				System.out.println("texto en fechaaaa  "+dpFechaVigencia.getValue());
-//				
-//				if (dpFechaVigencia.getValue()!=null)
-//					bandFechaVigencia=true;
-//				else
-//					bandFechaVigencia=false;
-//				
-//				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
-//					 tfValorVariable.setDisable(false);
-//					 tfValorVariable.setOpacity(1);
-//				}else{
-//					 tfValorVariable.setDisable(true);
-//					 tfValorVariable.setOpacity(0.5);
-//				}					
-//			}});
-		
+				
 		if (bandTipoDato)
 			if (cbdvTipoValor.getSelectionModel().getSelectedItem().toString().equals("Monto")){
 				asignarTipoMonto();
@@ -1154,13 +1140,28 @@ public class ConfigPestController {
 				asignarTipoPorcentaje();
 				System.out.println("undi porcentaje");
 			}
-	}
 	
+//		gpdvFecha.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//		    @Override
+//		    public void handle(MouseEvent mouseEvent) {
+//		        EventTarget target = mouseEvent.getTarget();
+//		        lastY = mouseEvent.getSceneY();
+//		    	System.out.println("imprimi en click de fecha a a a a a");
+//		    }
+//		});
+		
+//		gpdvFecha.getChildren().get(0).setOnDragEntered(new EventHandler<DragEvent>(){
+//            @Override
+//            public void handle(DragEvent t) {
+//                myGridPane.getChildren().get(ci).setStyle("-fx-background-color:yellow;");   
+//            }                
+//        });
+	}	
 	@FXML
 	private void botondvActionAceptar(){
 		ldvAlerta.setVisible(false);	
 		Calendar c = Calendar.getInstance();
-		c.setTime(this.dp.getSelectedDate());
+		c.setTime(this.dpFechaVigencia.getSelectedDate());
 		System.out.println("la fechaaaaaaaaaaaaaaaa   "+c.getTime());
 //		objde guardarfactura.setfecha(c.getTime());
 		
@@ -1196,9 +1197,30 @@ public class ConfigPestController {
 	private Session openSesion(){		
 		Session sesion = Main.sesionFactory.getCurrentSession();
 		sesion.beginTransaction();		return sesion;
-	}
-	
+	}	
 	private void closeSesion(Session sesion){		
 		sesion.getTransaction().commit();
 	}
 }
+
+//gpdvFecha.setOnAction(new EventHandler(){
+//@Override
+//public void handle(Event arg0) {
+//	lAlerta.setVisible(false);
+//	System.out.println("texto en fechaaaa  "+dpFechaVigencia.getValue());
+//	
+//	if (dpFechaVigencia.getValue()!=null)
+//		bandFechaVigencia=true;
+//	else
+//		bandFechaVigencia=false;
+//	
+//	if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
+//		 tfValorVariable.setDisable(false);
+//		 tfValorVariable.setOpacity(1);
+//	}else{
+//		 tfValorVariable.setDisable(true);
+//		 tfValorVariable.setOpacity(0.5);
+//	}	
+//	System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
+//}
+//});

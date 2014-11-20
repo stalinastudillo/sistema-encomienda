@@ -205,7 +205,7 @@ public class DestinatarioController {
 					 	if (newValue.compareTo("")!=0){
 					 		if (vv.length == 1){	
 					 			tipocedularif(vv,"nopersona");					 		
-						 	}else if ((vv.length > 2) && (vv.length <= 10)){	
+						 	}else if ((vv.length > 1) && (vv.length <= 9)){	
 						 		if ( (vv[vv.length-1] == '1') || (vv[vv.length-1] == '2') || (vv[vv.length-1] == '3')
 						 				|| (vv[vv.length-1] == '4') || (vv[vv.length-1] == '5') || (vv[vv.length-1] == '6')
 						 				|| (vv[vv.length-1] == '7') || (vv[vv.length-1] == '8') || (vv[vv.length-1] == '9')
@@ -247,7 +247,7 @@ public class DestinatarioController {
 									}
 									closeSesion(sesion3);
 						 		}
-						 	}else if (vv.length > 10)
+						 	}else if (vv.length > 9)
 						 		tfRIFCedulaC.setText(oldValue);
 					 	}else{
 					 		lEjemploCIR.setVisible(false);
@@ -264,7 +264,7 @@ public class DestinatarioController {
 					 	if (newValue.compareTo("")!=0){
 					 		if (vv.length == 1){	
 					 			tipocedularif(vv,"juridico");					 		
-						 	}else if ((vv.length > 2) && (vv.length <= 10)){	
+						 	}else if ((vv.length > 1) && (vv.length <= 10)){	
 						 		if ( (vv[vv.length-1] == '1') || (vv[vv.length-1] == '2') || (vv[vv.length-1] == '3')
 						 				|| (vv[vv.length-1] == '4') || (vv[vv.length-1] == '5') || (vv[vv.length-1] == '6')
 						 				|| (vv[vv.length-1] == '7') || (vv[vv.length-1] == '8') || (vv[vv.length-1] == '9')

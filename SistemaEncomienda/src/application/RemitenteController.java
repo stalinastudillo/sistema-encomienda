@@ -182,7 +182,6 @@ public class RemitenteController {
 				cbTarifaC.getSelectionModel().select(-1);
 				cbTarifaP.getSelectionModel().select(-1);
 				tfRIFCedulaC.setText("");tfCedulaP.setText("");
-				System.out.println("limpie por aqui * * * * * * * ");
 				System.out.println("si es la primera vez");
 			}else{
 				System.out.println("ya no es la primera vez");
@@ -207,7 +206,7 @@ public class RemitenteController {
 				 	if (newValue.compareTo("")!=0){				 		
 				 		if (v.length == 1){	
 				 			tipocedularif(v,"persona");					 		
-					 	}else if ((v.length > 2) && (v.length <= 10)){	
+					 	}else if ((v.length > 1) && (v.length <= 9)){	
 					 		if ( (v[v.length-1] == '1') || (v[v.length-1] == '2') || (v[v.length-1] == '3')
 					 				|| (v[v.length-1] == '4') || (v[v.length-1] == '5') || (v[v.length-1] == '6')
 					 				|| (v[v.length-1] == '7') || (v[v.length-1] == '8') || (v[v.length-1] == '9')
@@ -255,7 +254,7 @@ public class RemitenteController {
 								}						
 								sesion1.getTransaction().commit();
 					 		}
-					 	}else if (v.length > 10)
+					 	}else if (v.length > 9)
 					 		tfCedulaP.setText(oldValue);				 							
 				 	}else
 				 		lEjemploCIP.setVisible(false);  	 
@@ -345,7 +344,7 @@ public class RemitenteController {
 					 	if (newValue.compareTo("")!=0){
 					 		if (vv.length == 1){	
 					 			tipocedularif(vv,"nopersona");					 		
-						 	}else if ((vv.length > 2) && (vv.length <= 10)){	
+						 	}else if ((vv.length > 1) && (vv.length <= 9)){	
 						 		if ( (vv[vv.length-1] == '1') || (vv[vv.length-1] == '2') || (vv[vv.length-1] == '3')
 						 				|| (vv[vv.length-1] == '4') || (vv[vv.length-1] == '5') || (vv[vv.length-1] == '6')
 						 				|| (vv[vv.length-1] == '7') || (vv[vv.length-1] == '8') || (vv[vv.length-1] == '9')
@@ -392,7 +391,7 @@ public class RemitenteController {
 									}						
 									sesion1.getTransaction().commit();
 						 		}
-						 	}else if (vv.length > 10)
+						 	}else if (vv.length > 9)
 						 		tfRIFCedulaC.setText(oldValue);
 					 	}else
 					 		lEjemploCIR.setVisible(false);
@@ -403,7 +402,7 @@ public class RemitenteController {
 					 	if (newValue.compareTo("")!=0){
 					 		if (vv.length == 1){	
 					 			tipocedularif(vv,"juridico");					 		
-						 	}else if ((vv.length > 2) && (vv.length <= 10)){	
+						 	}else if ((vv.length > 1) && (vv.length <= 10)){	
 						 		if ( (vv[vv.length-1] == '1') || (vv[vv.length-1] == '2') || (vv[vv.length-1] == '3')
 						 				|| (vv[vv.length-1] == '4') || (vv[vv.length-1] == '5') || (vv[vv.length-1] == '6')
 						 				|| (vv[vv.length-1] == '7') || (vv[vv.length-1] == '8') || (vv[vv.length-1] == '9')

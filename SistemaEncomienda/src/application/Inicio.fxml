@@ -21,6 +21,7 @@
             	<MenuItem mnemonicParsing="false" text="Consultar" onAction="#menuCliente" fx:id="miCliente" />
           	</items>
         </Menu>
+        
         <Menu mnemonicParsing="false" text="Configuración" fx:id="mbConfiguracion">
          	<items> 
          		<MenuItem mnemonicParsing="false" text="Unidad" onAction="#menuUnidad" fx:id="miUnidad"/>      

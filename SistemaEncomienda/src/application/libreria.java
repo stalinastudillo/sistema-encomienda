@@ -44,7 +44,6 @@ public class libreria {
 	                    e.consume(); 
 	                }else if (txt_TextField.getText().indexOf(".") != -1){
 	                	System.out.println("el . de decimal  "+txt_TextField.getText().indexOf("."));
-	                	System.out.println("el . de decimal  "+txt_TextField.getText().length());
 	                	
 	                	if (txt_TextField.getText().length() > (txt_TextField.getText().indexOf(".")+2) ) {
 	                        System.out.println("ya tiene 2 decimales");

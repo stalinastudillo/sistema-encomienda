@@ -1,7 +1,5 @@
 package application;
 
-
-//http://incepttechnologies.blogspot.com/p/javafx-tableview-with-pagination-and.html
 // y proyecto ejemplo en escritorio
 
 /*
@@ -11,12 +9,14 @@ package application;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+
 import data.Cliente;
 import data.Factura;
 import data.Oficina;
@@ -101,6 +101,9 @@ public class ClienteController {
 	private Button bUltimo;
 	
 	@FXML
+	private Button bConsultarFacturas;
+	
+	@FXML
 	private Label lCodigoReg;
 	
 	Tooltip ttAceptar = new Tooltip();
@@ -151,6 +154,10 @@ public class ClienteController {
 	
 	@FXML
 	private Pagination cPaginator;
+	
+	private int inicioitemsTabla=0,finitemsTabla=2,actualPagIndex=0; 
+	
+	ObservableList<Factura> itemsTabla;
 	
 	@FXML
 	private void initialize(){		
@@ -340,8 +347,8 @@ public class ClienteController {
 		
 	@FXML
 	private void actionBotonPrimero() throws Exception{
-		tvTabla.setVisible(false);
-		cPaginator.setVisible(false);
+		tvTabla.setVisible(false); bConsultarFacturas.setDisable(false);
+		cPaginator.setVisible(false); actualPagIndex=0; inicioitemsTabla=0;
 		bAnterior.setDisable(true);		bPrimero.setDisable(true);
 		bSiguiente.setDisable(false);		bUltimo.setDisable(false);	
 		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);		
@@ -368,8 +375,8 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonUltimo() throws Exception{
-		tvTabla.setVisible(false);
-		cPaginator.setVisible(false);
+		tvTabla.setVisible(false); bConsultarFacturas.setDisable(false);
+		cPaginator.setVisible(false); actualPagIndex=0; inicioitemsTabla=0;
 		System.out.println("ultimo ");
 		bAnterior.setDisable(false);
 		bPrimero.setDisable(false);
@@ -399,8 +406,8 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonAnterior() throws Exception{
-		tvTabla.setVisible(false);
-		cPaginator.setVisible(false);
+		tvTabla.setVisible(false); bConsultarFacturas.setDisable(false);
+		cPaginator.setVisible(false); actualPagIndex=0; inicioitemsTabla=0;
 		System.out.println("anterior");
 		lAlertaMsj.setVisible(false);
 		lAlertaRIFCedula.setVisible(false);	
@@ -450,8 +457,8 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonSiguiente() throws Exception{	
-		tvTabla.setVisible(false);		
-		cPaginator.setVisible(false);
+		tvTabla.setVisible(false);		 bConsultarFacturas.setDisable(false);
+		cPaginator.setVisible(false); actualPagIndex=0; inicioitemsTabla=0;
 		System.out.println("siguiente");
 		lAlertaMsj.setVisible(false);		lAlertaRIFCedula.setVisible(false);
 		bAnterior.setDisable(false);		bPrimero.setDisable(false);
@@ -695,8 +702,8 @@ public class ClienteController {
 	
 	@FXML
 	private void actionBotonConsultarFactura() throws Exception{
-		tvTabla.setVisible(true);
-		cPaginator.setVisible(true);
+		bConsultarFacturas.setDisable(true);
+		
 		System.out.println("Consultar facturas de "+objCliente.getDireccion() + " "+objCliente.getCodigo());
 		tcNroFiscal.setCellValueFactory(new PropertyValueFactory<Factura, String>("controlFiscal"));
 		tcTipoEmbalaje.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Factura,String>, ObservableValue<String>>() {			
@@ -719,34 +726,48 @@ public class ClienteController {
 		}});
 		tcModoPago.setCellValueFactory(new PropertyValueFactory<Factura, String>("modoPago"));
 		
-		tvTabla.setColumnResizePolicy(tvTabla.UNCONSTRAINED_RESIZE_POLICY);
+		tvTabla.setColumnResizePolicy(tvTabla.UNCONSTRAINED_RESIZE_POLICY);	
 		
-		Query queryTabla;
-		ObservableList<Factura> itemsTabla = FXCollections.observableArrayList();
-		itemsTabla.clear();
+		Query queryTabla;			
 		Session ses = openSesion();
 		
 		queryTabla = ses.createQuery("FROM Factura WHERE ((modoPago = :mpfd AND CodClienteDestinatario = :clid) OR (modoPago = :mpc AND CodClienteRemitente = :clir))");
-		queryTabla.setString("mpfd", "flete destino");
-		queryTabla.setString("mpc", "cancelado");
-		queryTabla.setInteger("clid", objCliente.getCodigo());
-		queryTabla.setInteger("clir", objCliente.getCodigo());
-		itemsTabla = FXCollections.observableArrayList(queryTabla.list());
-		
+		queryTabla.setString("mpfd", "flete destino");	queryTabla.setString("mpc", "cancelado");
+		queryTabla.setInteger("clid", objCliente.getCodigo());	queryTabla.setInteger("clir", objCliente.getCodigo());
+		itemsTabla = FXCollections.observableArrayList(queryTabla.list());		
+//		System.out.println("cantidad de paginas: " + cantidadPagTabla(itemsTabla.size(),finitemsTabla));
+				
 		if (itemsTabla.isEmpty()){
-			itemsTabla.clear();tvTabla.setItems(itemsTabla);System.out.println("el cliente no tiene facturas asociadas");
+			tvTabla.setVisible(false);		cPaginator.setVisible(false);
+			itemsTabla.clear();			tvTabla.setItems(itemsTabla);
+			System.out.println("el cliente NO tiene facturas asociadas  "+itemsTabla.size());
+			cPaginator.setPageCount(1);			cPaginator.setDisable(true);
+			lAlertaMsj.setText("El cliente no posee facturas asociadas");
+			lAlertaMsj.setVisible(true);lAlertaMsj.setLayoutY(350);
 		}else{
-			tvTabla.setItems(itemsTabla);System.out.println("el cliente tiene facturas asociadas");
+			lAlertaMsj.setVisible(false); tvTabla.setVisible(true);	cPaginator.setVisible(true);			
+			cPaginator.setPageCount(cantidadPagTabla(itemsTabla.size(),finitemsTabla));
+			cPaginator.setDisable(false);
+			System.out.println("el cliente tiene facturas asociadas  "+itemsTabla.size());
+			actualizaritemsTabla();			
 		}
-		closeSesion(ses);				
-		System.out.println("Consultar facturas de - - ");
-	} 
-	
-	private Session openSesion(){
+		closeSesion(ses);		
+		cPaginator.currentPageIndexProperty().addListener(new ChangeListener<Number>() {
+		      @Override
+		      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+		        System.out.println("Pagination Changed from " + oldValue + " , to " + newValue);		       
+		        actualPagIndex = newValue.intValue();
+		        //Dependiendiendo del index de la paginacion que seleccione 1,2,3,4,5
+		        //actualizo la porcion de la lista a mostrar en la tabla		        
+		        actualizaritemsTabla();
+		      }
+		    });
+	}	
+
 		
+private Session openSesion(){		
 		Session sesion = Main.sesionFactory.getCurrentSession();
-		sesion.beginTransaction();
-		
+		sesion.beginTransaction();		
 		return sesion;
 	}
 	
@@ -808,5 +829,26 @@ public class ClienteController {
 				}
 			}
 		}
+	}
+	
+	private int cantidadPagTabla(int totalregistros, int itemsPorPagina){
+		float floatCount = Float.valueOf(totalregistros) / Float.valueOf(itemsPorPagina);
+		int cantidad = totalregistros / itemsPorPagina;
+		System.out.println("float: "+floatCount+" int: "+cantidad);
+		return ((floatCount > cantidad) ? ++cantidad : cantidad);
+	}
+	
+	private void actualizaritemsTabla(){
+		System.out.println("finitemsTabla  "+ finitemsTabla);
+		System.out.println("actualPagIndex  "+ actualPagIndex);
+		System.out.println("iTabla.size()  "+ itemsTabla.size());
+		
+		System.out.println("inicio:  "+finitemsTabla*actualPagIndex);
+		System.out.println("fin :  "+ ( (actualPagIndex * finitemsTabla + finitemsTabla <= itemsTabla.size()) ? actualPagIndex * finitemsTabla + finitemsTabla : itemsTabla.size() ) );
+		
+		ObservableList<Factura> itemsT = FXCollections.observableArrayList(itemsTabla.subList(finitemsTabla*actualPagIndex, ((actualPagIndex * finitemsTabla + finitemsTabla <= itemsTabla.size()) ? actualPagIndex * finitemsTabla + finitemsTabla : itemsTabla.size())));
+		System.out.println("actualizarrrr "+itemsT.size());
+	
+		tvTabla.setItems(itemsT);
 	}
 }
