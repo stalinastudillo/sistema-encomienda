@@ -8,6 +8,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ListIterator;
 
 import javax.print.*;
+import javax.print.DocFlavor.URL;
 import javax.print.attribute.*;
 
 import org.hibernate.HibernateException;
@@ -251,8 +252,9 @@ public class EncomiendaController{
 	
 	@FXML
 	private void initialize(){	
-		
+		System.out.println("imprimir antes");
 //		comandoimprimir();
+		System.out.println("imprimir despues");
 		
 			tfPeso.focusedProperty().addListener(new ChangeListener<Boolean>(){
 			    @Override
@@ -528,8 +530,8 @@ public class EncomiendaController{
 		    		if (validarInformacionCompleta())		bCalcularMonto.setDisable(false);
 		    		else   		bCalcularMonto.setDisable(true);
 			    }
-			});	
-						
+			});			
+			
 			tfPeso.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(8));	
 	
 			tfRecargo.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
@@ -537,21 +539,46 @@ public class EncomiendaController{
 			tfSeguro.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
 	}
 	
+//	private void comandoimprimir(){
+//		
+//		PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+//		DocPrintJob job = service.createPrintJob();
+//		URL url = new URL("http://www.thisiscolossal.com/wp-content/uploads/2014/03/120430.gif");
+//		DocFlavor flavor = DocFlavor.URL.GIF;
+//		Doc doc = new SimpleDoc(url, flavor, null);
+//		PrintRequestAttributeSet attrs = new HashPrintRequestAttributeSet();
+//		
+//		try {
+//			job.print(doc, attrs);
+//		} catch (PrintException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+//	}
+	
 	private void comandoimprimir(){
-		String ruta="C:/prueba/Hola.txt";	FileInputStream inputStream = null;
+		System.out.println("hola hola ");
+		String ruta="C:/prueba/hola.txt";
+		FileInputStream inputStream = null;
 		
-		try {	inputStream = new FileInputStream(ruta);		
-		} catch (FileNotFoundException e) {	System.out.println("no hay archivo doc");	}
+		try {			
+			inputStream = new FileInputStream(ruta);		
+		} catch (FileNotFoundException e) {	
+			System.out.println("no hay archivo doc");	
+		}
+		System.out.println("hola hola 22");
+		if (inputStream == null) 
+			return;  				
 		
-		if (inputStream == null) return;  				
-				
-//		describe el tipo de datos que se va a imprimir y cómo se almacenan los datos
-		DocFlavor docF = DocFlavor.INPUT_STREAM.AUTOSENSE;	
+//		describe el tipo de datos que se va a imprimir y cómo se almacenan los datos	
 //		DocFlavor docF = DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF_8;
 		
+		DocFlavor docF = DocFlavor.STRING.TEXT_PLAIN;// .INPUT_STREAM.PDF;
+		System.out.println("hola hola 2 "+docF.toString());
 		Doc document = new SimpleDoc(inputStream, docF, null);		
 		
-		try {	System.out.println("bytes: "+document.getStreamForBytes());
+		try {	
+			System.out.println("bytes: "+document.getStreamForBytes()+" &..& "+document.getPrintData());
 		} catch (IOException e1) {	e1.printStackTrace();	}
 		
 //		para establecer algunos atributos de la impresora
@@ -566,11 +593,17 @@ public class EncomiendaController{
 		if (defaultPrintService != null){		
 			DocPrintJob printJob = defaultPrintService.createPrintJob();
 		
-			try{	printJob.print(document, attributeSet);		
-			}catch (Exception e) {		e.printStackTrace();	}
+			try{	
+				printJob.print(document, attributeSet);		
+			}catch (Exception e){		
+				e.printStackTrace();
+			}
 		
-			try {	inputStream.close();
-			} catch (IOException e) {	e.printStackTrace();	}
+			try{	
+				inputStream.close();
+			}catch (IOException e){	
+				e.printStackTrace();
+			}
 		}
 	}	
 	
@@ -962,6 +995,7 @@ public class EncomiendaController{
 				e.printStackTrace();
 			}
 			guardarFormaPago();
+			comandoimprimir();
 		}	
 	}	
 	

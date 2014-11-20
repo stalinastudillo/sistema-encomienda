@@ -147,7 +147,8 @@ public class ConfComisionesController {
 				if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
 					 tfValorVariable.setDisable(false);
 					 tfValorVariable.setOpacity(1);
-       		    }				
+       		    }	
+				System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
 		}});
 		
 		cbTipoValor.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){			
@@ -173,6 +174,7 @@ public class ConfComisionesController {
 					 tfValorVariable.setDisable(false);
  					 tfValorVariable.setOpacity(1);
         		 }
+				System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
 		}});
 	
 //		dpFechaVigencia.setOnAction(new EventHandler(){
@@ -193,7 +195,7 @@ public class ConfComisionesController {
 //					 tfValorVariable.setDisable(true);
 //					 tfValorVariable.setOpacity(0.5);
 //				}					
-//			}});
+//		}});
 		
 		if (bandTipoDato)
 			if (cbTipoValor.getSelectionModel().getSelectedItem().toString().equals("Monto")){
