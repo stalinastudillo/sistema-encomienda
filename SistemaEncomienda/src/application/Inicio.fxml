@@ -20,24 +20,10 @@
           	<items>            
             	<MenuItem mnemonicParsing="false" text="Consultar" onAction="#menuCliente" fx:id="miCliente" />
           	</items>
-        </Menu>
-        
-        <Menu mnemonicParsing="false" text="Configuración" fx:id="mbConfiguracion">
-         	<items> 
-         		<MenuItem mnemonicParsing="false" text="Unidad" onAction="#menuUnidad" fx:id="miUnidad"/>      
-         	    <MenuItem mnemonicParsing="false" text="Tarifa" onAction="#menuTarifa" fx:id="miTarifa"/>
-           		<MenuItem mnemonicParsing="false" text="Peso" onAction="#menuPeso" fx:id="miPeso"/>
-           		<MenuItem mnemonicParsing="false" text="Variable" onAction="#menuVariable" fx:id="miVariable"/>          	    
-         	    <MenuItem mnemonicParsing="false" text="Ciudad Destino" onAction="#menuCiudadDestino" fx:id="miCiudadDestino"/>
-         	    <MenuItem mnemonicParsing="false" text="Tipo Embalaje" onAction="#menuTipoEmbalaje" fx:id="miTipoEmbalaje"/>         	     	            	            	            	
-            	<MenuItem mnemonicParsing="false" text="Asociar Tarifa/Peso" onAction="#menuTarifaPeso" fx:id="miTarifaPeso"/>
-            	<MenuItem mnemonicParsing="false" text="Detalle Variable" onAction="#menuDetalleVariable" fx:id="miComision" />
-            	<MenuItem mnemonicParsing="false" text="Ipostel" onAction="#menuIpostel" fx:id="miIpostel"/>            	
-         	</items>
-        </Menu>
-        <Menu  mnemonicParsing="false" text="Pesta#as" fx:id="mbPesta">
+        </Menu>      
+        <Menu  mnemonicParsing="false" text="Configuracion" fx:id="mbPesta">
         	<items>
-        		<MenuItem mnemonicParsing="false" text="Configss" onAction="#menuConfiguracion"/>
+        		<MenuItem mnemonicParsing="false" text="Configuracion" onAction="#menuConfiguracion"/>
         	</items>
         </Menu>
         <Menu mnemonicParsing="false" text="Reportes" fx:id="mbReportes">

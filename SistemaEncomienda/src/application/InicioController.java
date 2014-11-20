@@ -31,15 +31,6 @@ public class InicioController {
 	Tooltip ttCliente = new Tooltip();
 	
 	VentanaCliente ventCliente;	
-	VentanaConfComisiones ventComisiones;
-	VentanaConfAsociarTarifaPeso ventConfAsociarTarifaPeso;
-	VentanaConfPeso ventConfPeso;	
-	VentanaConfTarifa ventConfTarifa;
-	VentanaCiudadDestino ventCiudadDestino;
-	VentanaTipoEmbalaje ventTipoEmbalaje;
-	VentanaUnidad ventUnidad;
-	VentanaConfVariable ventVariable;
-	VentanaConfIpostel ventConfIpostel;
 	VentanaReporte1 ventReporteUno;
 	VentanaConfigPest ventConfigPest;
 	
@@ -118,197 +109,8 @@ public class InicioController {
 			ventCliente = new VentanaCliente();
 			ventCliente.start(new Stage());
 		}
-	}
-		
-	@FXML
-	public void menuUnidad() throws Exception{
-		System.out.println("menu Unidad");
-		ventUnidad = null;
-		lAlertaMsj.setVisible(false);
-		if (ventUnidad == null){
-			ventUnidad = new VentanaUnidad();
-			ventUnidad.start(new Stage());
-		}
-	}
-	
-	@FXML
-	public void menuTarifa() throws Exception{
-		System.out.println("menu tarifa");
-		ventConfTarifa = null;
-		lAlertaMsj.setVisible(false);
-		if (ventConfTarifa == null){
-			ventConfTarifa = new VentanaConfTarifa();
-			ventConfTarifa.start(new Stage());
-		}
 	}	
-	
-	@FXML
-	public void menuPeso() throws Exception{
-		System.out.println("menu peso");
-		lAlertaMsj.setVisible(false);
-		
-		try{
-			Session sesion1 = openSesion();			
-			queryResultUnidad = sesion1.createQuery("from Unidad");	
-			queryResultUnidad.setMaxResults(1);
-			objUnidad = new Unidad();
-			objUnidad = (Unidad) queryResultUnidad.uniqueResult();	
-			closeSesion(sesion1);	
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}		
-		
-		if (objUnidad != null){
-			ventConfPeso = null;
-			lAlertaMsj.setVisible(false);
-			if (ventConfPeso == null){
-				ventConfPeso = new VentanaConfPeso();
-				ventConfPeso.start(new Stage());
-			}
-		}else{
-			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN UNIDAD");
-			lAlertaMsj.setVisible(true);
-		} 
-	}
-	
-	@FXML
-	public void	menuVariable() throws Exception{
-		System.out.println("menu variable");
-		ventVariable = null;
-		lAlertaMsj.setVisible(false);
-		if (ventVariable == null){
-			ventVariable = new VentanaConfVariable();
-			ventVariable.start(new Stage());
-		}
-	}
-	
-	@FXML
-	public void menuCiudadDestino() throws Exception{
-		System.out.println("menu ciudad destino");
-		ventCiudadDestino = null;
-		lAlertaMsj.setVisible(false);
-		if (ventCiudadDestino == null){
-			ventCiudadDestino = new VentanaCiudadDestino();
-			ventCiudadDestino.start(new Stage());
-		}
-	}
-	
-	@FXML
-	public void menuTipoEmbalaje() throws Exception{
-		System.out.println("menu tipo embalaje");
-		lAlertaMsj.setVisible(false);
-		try{
-			Session sesion1 = openSesion();			
-			queryResultTarifa = sesion1.createQuery("from Tarifa");	
-			queryResultTarifa.setMaxResults(1);
-			objTarifa = new Tarifa();
-			objTarifa = (Tarifa) queryResultTarifa.uniqueResult();	
-			closeSesion(sesion1);	
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}
-		
-		if (objTarifa != null){
-			ventTipoEmbalaje = null;			
-			if (ventTipoEmbalaje == null){
-				ventTipoEmbalaje = new VentanaTipoEmbalaje();
-				ventTipoEmbalaje.start(new Stage());
-			}
-		}else{
-			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN TARIFA");
-			lAlertaMsj.setVisible(true);
-		} 	
-	}
-	
-	@FXML
-	public void menuTarifaPeso() throws Exception{
-		System.out.println("menu tarifaPeso");
-		ventConfAsociarTarifaPeso = null;
-		lAlertaMsj.setVisible(false);
-		
-		try{
-			Session sesion1 = openSesion();			
-			queryResultTarifa = sesion1.createQuery("from Tarifa");
-			queryResultTarifa.setMaxResults(1);
-			objTarifa = new Tarifa();
-			objTarifa = (Tarifa) queryResultTarifa.uniqueResult();	
-			queryResultPeso = sesion1.createQuery("from PesoTarifa");
-			queryResultPeso.setMaxResults(1);
-			objPeso = new PesoTarifa();
-			objPeso = (PesoTarifa) queryResultPeso.uniqueResult();			
-			closeSesion(sesion1);	
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}
-		
-		if ((objTarifa!=null) && (objPeso!=null)){
-			if (ventConfAsociarTarifaPeso == null){
-				ventConfAsociarTarifaPeso = new VentanaConfAsociarTarifaPeso();
-				ventConfAsociarTarifaPeso.start(new Stage());
-			}
-		}else{
-			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN TARIFA Y/O PESO");
-			lAlertaMsj.setVisible(true);
-		} 
-	}
-	
-	@FXML
-	public void menuDetalleVariable() throws Exception{
-		System.out.println("menu detalle variable");
-		lAlertaMsj.setVisible(false);
-		
-		try{
-			Session sesion1 = openSesion();			
-			queryResultVarConf = sesion1.createQuery("from VariableConfiguracion");	
-			queryResultVarConf.setMaxResults(1);
-			objVarConf = new VariableConfiguracion();
-			objVarConf = (VariableConfiguracion) queryResultVarConf.uniqueResult();	
-			closeSesion(sesion1);	
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}	
-		
-		if (objVarConf!=null){
-			ventComisiones = null;
-			if (ventComisiones == null){
-				ventComisiones = new VentanaConfComisiones();
-				ventComisiones.start(new Stage());
-			}
-		}else{
-			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN VARIABLE");
-			lAlertaMsj.setVisible(true);
-		} 
-	}
-	
-	@FXML
-	public void menuIpostel() throws Exception{
-		System.out.println("menu ipostel");
-		lAlertaMsj.setVisible(false);
-		
-		try{
-			Session sesion1 = openSesion();			
-			queryResultUnidad = sesion1.createQuery("from Unidad");	
-			queryResultUnidad.setMaxResults(1);
-			objUnidad = new Unidad();
-			objUnidad = (Unidad) queryResultUnidad.uniqueResult();	
-			closeSesion(sesion1);	
-		}catch(HibernateException e){
-			e.printStackTrace();
-		}		
-		
-		if (objUnidad != null){
-			ventConfIpostel = null;
-			lAlertaMsj.setVisible(false);
-			if (ventConfIpostel == null){
-				ventConfIpostel = new VentanaConfIpostel();
-				ventConfIpostel.start(new Stage());
-			}
-		}else{
-			lAlertaMsj.setText("NO EXISTE INFORMACIÓN EN TABLA UNIDAD");
-			lAlertaMsj.setVisible(true);
-		} 
-	}
-	
+						
 	@FXML
 	public void menuConfiguracion() throws Exception{
 		System.out.println("menu pestañas ! ! ! ! ! ! ! ! ! !");
@@ -340,13 +142,11 @@ public class InicioController {
 	
 	private Session openSesion(){		
 		Session sesion = Main.sesionFactory.getCurrentSession();
-		sesion.beginTransaction();
-		
+		sesion.beginTransaction();		
 		return sesion;
 	}
 	
-	private void closeSesion(Session sesion){
-		
+	private void closeSesion(Session sesion){		
 		sesion.getTransaction().commit();
 	}
 }
