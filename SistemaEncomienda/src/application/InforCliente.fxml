@@ -137,7 +137,7 @@
 	        <TableColumn fx:id="tcNroFiscal" prefWidth="85.0" text="NroFiscal" />
 	        <TableColumn fx:id="tcTipoEmbalaje" prefWidth="85.0" text="Embalaje" />
 	        <TableColumn fx:id="tcCiudadDestino" prefWidth="85.0" text="Destino" />
-	        <TableColumn fx:id="tcModoPago" prefWidth="85.0" text="Modo Pago" />
+	        <TableColumn fx:id="tcFecha" prefWidth="85.0" text="Fecha" />
 	        <TableColumn fx:id="tcMonto" prefWidth="85.0" text="Monto" />      
 	      </columns>
 	      <stylesheets>
