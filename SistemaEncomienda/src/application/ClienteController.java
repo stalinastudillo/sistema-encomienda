@@ -147,7 +147,7 @@ public class ClienteController {
 	private TableColumn<Factura, String> tcCiudadDestino;
 	
 	@FXML
-	private TableColumn<Factura, String> tcModoPago;
+	private TableColumn<Factura, String> tcFecha;
 	
 	@FXML
 	private TableColumn<Factura, String> tcMonto;
@@ -724,7 +724,7 @@ public class ClienteController {
 				DecimalFormat df = new DecimalFormat("##.00",dfs);				
 				return new SimpleStringProperty(""+df.format(arg0.getValue().getMontoTotal()));
 		}});
-		tcModoPago.setCellValueFactory(new PropertyValueFactory<Factura, String>("modoPago"));
+		tcFecha.setCellValueFactory(new PropertyValueFactory<Factura, String>("Fecha"));
 		
 		tvTabla.setColumnResizePolicy(tvTabla.UNCONSTRAINED_RESIZE_POLICY);	
 		
@@ -763,9 +763,8 @@ public class ClienteController {
 		      }
 		    });
 	}	
-
 		
-private Session openSesion(){		
+	private Session openSesion(){		
 		Session sesion = Main.sesionFactory.getCurrentSession();
 		sesion.beginTransaction();		
 		return sesion;

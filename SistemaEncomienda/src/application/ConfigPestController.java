@@ -43,6 +43,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class ConfigPestController {
@@ -199,6 +200,13 @@ public class ConfigPestController {
 	       	}
 		});		
 	}
+	
+	@FXML
+	private void actionBotonCancelar() throws Exception{
+		Stage stage = (Stage) tabPane.getScene().getWindow();
+		ContextoEncomienda.getInstance().setBanderaNuevaFactura(false);
+		stage.close();		
+	}	
 	
 //	Pestaña Unidad
 	
