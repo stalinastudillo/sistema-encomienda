@@ -52,6 +52,7 @@ public class ContextoEncomienda {
 	 private String facturaTotalSubTotal = new String();
 	 private String facturaTotalIVA = new String();
 	 private Ipostel ipostel = new Ipostel();
+	 private boolean banderaBotonCalcularMonto = false;
 
 	 public String getIdentificadorVentana() {
 		return identificadorVentana;
@@ -268,5 +269,12 @@ public class ContextoEncomienda {
 	}
 	public void setBanderaConsultaFactura(boolean banderaConsultaFactura) {
 		this.banderaConsultaFactura = banderaConsultaFactura;
+	}
+	
+	public boolean getBanderaBotonCalcularMonto() {
+			return banderaBotonCalcularMonto;
+	}
+	public void setBanderaBotonCalcularMonto(boolean banderaBotonCalcularMonto) {
+		this.banderaBotonCalcularMonto = banderaBotonCalcularMonto;
 	}
 }
