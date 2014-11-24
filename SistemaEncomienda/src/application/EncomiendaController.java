@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.print.*;
 import javax.print.DocFlavor.URL;
@@ -19,7 +21,6 @@ import org.hibernate.exception.SQLGrammarException;
 import data.CiudadDestino;
 import data.Cliente;
 import data.Factura;
-//import data.IVARemesa;
 import data.FormaPago;
 import data.Ipostel;
 import data.Oficina;
@@ -253,7 +254,7 @@ public class EncomiendaController{
 	@FXML
 	private void initialize(){	
 		System.out.println("imprimir antes");
-//		comandoimprimir();
+		comandoimprimir();
 		System.out.println("imprimir despues");
 		
 			tfPeso.focusedProperty().addListener(new ChangeListener<Boolean>(){
@@ -267,52 +268,12 @@ public class EncomiendaController{
 			        			if ((ContextoEncomienda.getInstance().getRemitenteArriba().getNombre() != null)
 			        					&& (ContextoEncomienda.getInstance().getDestinatario().getNombre() != null)
 			        					&& cbUnidadPeso.getSelectionModel().getSelectedIndex()!=-1 ){
-			        				int idUnidad=0,idPeso=0,idTarifa=0,idIpostel=0;
-			        		
-					        		if (ContextoEncomienda.getInstance().getModoPago().equals("cancelado")){ 
-							        	if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("nuevo")==0)
-							        	   || (ContextoEncomienda.getInstance().getRemitAbajo().compareTo("consulta")==0)){
-							        		idTarifa=ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getCodigo();					        		
-							        	}else if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("copia")==0)){
-							        		idTarifa=ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getCodigo();
-							        	}
-						        	}else if (ContextoEncomienda.getInstance().getModoPago().equals("fletedestino")){
-						        		
-						        		idTarifa=ContextoEncomienda.getInstance().getDestinatario().getTarifa().getCodigo();
-						        	}
-				        		
-					        		for (int r=0;r<UnidadPesoList.size();r++){
-					        			if (r==cbUnidadPeso.getSelectionModel().getSelectedIndex()){
-					        				idUnidad = UnidadPesoList.get(r).getCodigo();
-					        				break;
-					        			}
-					        		}			        		
-					        		for (int r=0;r<PesoTarifaList.size();r++){
-					        			if (PesoTarifaList.get(r).getUndMedida().getCodigo()==idUnidad){
-					        				if ( (Double.parseDouble(tfPeso.getText()) >= PesoTarifaList.get(r).getDesde()) 
-					        					&& (Double.parseDouble(tfPeso.getText()) <= PesoTarifaList.get(r).getHasta()) ){
-					        					idPeso = PesoTarifaList.get(r).getCodigo();
-					        				}
-					        			}
-					        		}	
-					        		
-					        		for (int r=0;r<PrecioTarifaList.size();r++){
-					        			if ((PrecioTarifaList.get(r).getPesoTarifa().getCodigo()==idPeso)
-					        				 && (PrecioTarifaList.get(r).getTarifa().getCodigo()==idTarifa)){
-					        					lResulMonto.setText(String.valueOf(PrecioTarifaList.get(r).getMonto()));
-					        				}
-					        		}
-					        		
-					        		for (int r=0;r<IpostelList.size();r++){
-					        			if (IpostelList.get(r).getUndMedida().getCodigo() == idUnidad)
-				        					if ( (Double.parseDouble(tfPeso.getText()) >= IpostelList.get(r).getDesde()) 
-						        				&& (Double.parseDouble(tfPeso.getText()) <= IpostelList.get(r).getHasta()) ){
-				        						System.out.println("monto iposssssssssssssssssssstel  "+IpostelList.get(r).getValor());
-						        				lTotalipostel.setVisible(true);
-						        				ContextoEncomienda.getInstance().setIpostel(IpostelList.get(r));
-						        				lTotalipostel.setText(presentacionDecimal(String.valueOf(IpostelList.get(r).getValor())));
-						        			}
-					        		}	
+			        				int idUnidad=0,idPeso=0,idTarifa=0;			        		
+					        		idTarifa=buscarTarifa();
+					        		idUnidad=buscarUnidadPeso();
+					        		idPeso=buscarPeso(idUnidad);
+					        		cargarMontoSegunTarifa(idPeso,idTarifa);
+					        		cargarMontoIpostel(idUnidad);
 					        		
 			        		}
 			        		
@@ -402,60 +363,12 @@ public class EncomiendaController{
 							 (cbUnidadPeso.getSelectionModel().getSelectedIndex() != -1) &&
 							 !(tfPeso.getText().equals(""))	){
 									
-									int idUnidad=0,idPeso=0,idTarifa=0;					        		
-					        		if (ContextoEncomienda.getInstance().getModoPago().equals("cancelado")){ 
-							        	if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("nuevo")==0)
-							        	   || (ContextoEncomienda.getInstance().getRemitAbajo().compareTo("consulta")==0)){
-							        		
-							        		idTarifa=ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getCodigo();				        		
-							        		
-							        	}else if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("copia")==0)){
-							        		
-							        		idTarifa=ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getCodigo();							        		
-							        	}
-						        	}else if (ContextoEncomienda.getInstance().getModoPago().equals("fletedestino")){						        		
-						        		idTarifa=ContextoEncomienda.getInstance().getDestinatario().getTarifa().getCodigo();
-						        	}					        		
-					        		
-					        		for (int r=0;r<UnidadPesoList.size();r++){
-					        			if (r==cbUnidadPeso.getSelectionModel().getSelectedIndex()){
-					        				idUnidad = UnidadPesoList.get(r).getCodigo();
-					        				break;
-					        			}
-					        		}			        		
-					        		for (int r=0;r<PesoTarifaList.size();r++){
-					        			if (PesoTarifaList.get(r).getUndMedida().getCodigo()==idUnidad){
-					        				if ( (Double.parseDouble(tfPeso.getText()) >= PesoTarifaList.get(r).getDesde()) 
-					        					&& (Double.parseDouble(tfPeso.getText()) <= PesoTarifaList.get(r).getHasta()) ){
-					        					idPeso = PesoTarifaList.get(r).getCodigo();
-					        				}
-					        			}
-					        		}			       
-					        		boolean bandera1=false,bandera2=false;
-					        		for (int r=0;r<PrecioTarifaList.size();r++){
-					        			if ((PrecioTarifaList.get(r).getPesoTarifa().getCodigo()==idPeso)
-					        				 && (PrecioTarifaList.get(r).getTarifa().getCodigo()==idTarifa)){
-					        					bandera1=true;					        					
-					        					lResulMonto.setText(presentacionDecimal(String.valueOf(PrecioTarifaList.get(r).getMonto())));
-					        				}
-					        		}
-					        		
-					        		for (int r=0;r<IpostelList.size();r++){
-					        			if (IpostelList.get(r).getUndMedida().getCodigo() == idUnidad)
-				        					if ( (Double.parseDouble(tfPeso.getText()) >= IpostelList.get(r).getDesde()) 
-						        				&& (Double.parseDouble(tfPeso.getText()) <= IpostelList.get(r).getHasta()) ){
-						        				System.out.println("monto iposs---ssssssstel  "+IpostelList.get(r).getValor());
-						        				bandera2=true;lTotalipostel.setVisible(true);
-						        				ContextoEncomienda.getInstance().setIpostel(IpostelList.get(r));
-						        				lTotalipostel.setText(presentacionDecimal(String.valueOf(IpostelList.get(r).getValor())));
-						        			}
-					        		}	
-					        		if (!bandera1)	lResulMonto.setText("");					        			
-					        		bandera1=false;
-					        		
-					        		if (!bandera2)	lTotalipostel.setText("");					        			
-					        		bandera2=false;
-					        		
+									int idUnidad=0,idPeso=0,idTarifa=0;		        		
+					        		idTarifa=buscarTarifa();
+					        		idUnidad=buscarUnidadPeso();
+					        		idPeso=buscarPeso(idUnidad);
+					        		cargarMontoSegunTarifa(idPeso, idTarifa);
+					        		cargarMontoIpostel(idUnidad);
 					        		if (validarInformacionCompleta()) 		bCalcularMonto.setDisable(false);
 							    	else   		bCalcularMonto.setDisable(true);
 							}
@@ -539,73 +452,94 @@ public class EncomiendaController{
 			tfSeguro.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
 	}
 	
-//	private void comandoimprimir(){
-//		
-//		PrintService service = PrintServiceLookup.lookupDefaultPrintService();
-//		DocPrintJob job = service.createPrintJob();
-//		URL url = new URL("http://www.thisiscolossal.com/wp-content/uploads/2014/03/120430.gif");
-//		DocFlavor flavor = DocFlavor.URL.GIF;
-//		Doc doc = new SimpleDoc(url, flavor, null);
-//		PrintRequestAttributeSet attrs = new HashPrintRequestAttributeSet();
-//		
-//		try {
-//			job.print(doc, attrs);
-//		} catch (PrintException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//	}
+	private int buscarTarifa(){
+		int id=0;
+		if (ContextoEncomienda.getInstance().getModoPago().equals("cancelado")){ 
+        	if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("nuevo")==0)
+        	   || (ContextoEncomienda.getInstance().getRemitAbajo().compareTo("consulta")==0)){
+        		
+        		id=ContextoEncomienda.getInstance().getRemitenteAbajo().getTarifa().getCodigo();				        		
+        		
+        	}else if ((ContextoEncomienda.getInstance().getRemitAbajo().compareTo("copia")==0)){
+        		
+        		id=ContextoEncomienda.getInstance().getRemitenteArriba().getTarifa().getCodigo();							        		
+        	}
+    	}else if (ContextoEncomienda.getInstance().getModoPago().equals("fletedestino")){						        		
+    		id=ContextoEncomienda.getInstance().getDestinatario().getTarifa().getCodigo();
+    	}		
+		return id;
+	}
+	
+	private int buscarUnidadPeso(){
+		int id=0;
+		for (int r=0;r<UnidadPesoList.size();r++){
+			if (r==cbUnidadPeso.getSelectionModel().getSelectedIndex()){
+				id = UnidadPesoList.get(r).getCodigo();
+				break;
+			}
+		}
+		return id;
+	}
+	
+	private int buscarPeso(int idU){
+		int id=0;
+		
+		for (int r=0;r<PesoTarifaList.size();r++){
+			if (PesoTarifaList.get(r).getUndMedida().getCodigo()==idU){
+				if ( (Double.parseDouble(tfPeso.getText()) >= PesoTarifaList.get(r).getDesde()) 
+					&& (Double.parseDouble(tfPeso.getText()) <= PesoTarifaList.get(r).getHasta()) ){
+					id = PesoTarifaList.get(r).getCodigo();
+				}
+			}
+		}
+		return id;
+	}
+	
+	private void cargarMontoSegunTarifa(int idPeso, int idTarifa){
+		for (int r=0;r<PrecioTarifaList.size();r++){
+			if ((PrecioTarifaList.get(r).getPesoTarifa().getCodigo()==idPeso)
+				 && (PrecioTarifaList.get(r).getTarifa().getCodigo()==idTarifa)){
+					lResulMonto.setText(String.valueOf(PrecioTarifaList.get(r).getMonto()));
+				}
+		}
+	}
+	
+	private void cargarMontoIpostel(int idUnidad){
+		for (int r=0;r<IpostelList.size();r++){
+			if (IpostelList.get(r).getUndMedida().getCodigo() == idUnidad)
+				if ( (Double.parseDouble(tfPeso.getText()) >= IpostelList.get(r).getDesde()) 
+    				&& (Double.parseDouble(tfPeso.getText()) <= IpostelList.get(r).getHasta()) ){
+					System.out.println("monto ipostel  "+IpostelList.get(r).getValor());
+    				lTotalipostel.setVisible(true);
+    				ContextoEncomienda.getInstance().setIpostel(IpostelList.get(r));
+    				lTotalipostel.setText(presentacionDecimal(String.valueOf(IpostelList.get(r).getValor())));
+    			}
+		}	
+	}
 	
 	private void comandoimprimir(){
 		System.out.println("hola hola ");
-		String ruta="C:/prueba/hola.txt";
-		FileInputStream inputStream = null;
+		Map mapa = new HashMap<String, String>();
+		String cadena = new String();
+		mapa.put("destinatario_nombre", "pruebanombredest");
+		mapa.put("destinatario_apellido", "pruebaapellidodest");
+		mapa.put("remitente_nombre", "pruebanombreremit");
+		mapa.put("remitente_apellido", "pruebaapellidoremit");
 		
-		try {			
-			inputStream = new FileInputStream(ruta);		
-		} catch (FileNotFoundException e) {	
-			System.out.println("no hay archivo doc");	
-		}
-		System.out.println("hola hola 22");
-		if (inputStream == null) 
-			return;  				
+		cadena = mapa.get("destinatario_nombre").toString()+" \n\n "+mapa.get("destinatario_apellido").toString()+" \n\n "+mapa.get("remitente_nombre").toString()+" \n\n "+mapa.get("remitente_apellido").toString();
 		
-//		describe el tipo de datos que se va a imprimir y cómo se almacenan los datos	
-//		DocFlavor docF = DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF_8;
-		
-		DocFlavor docF = DocFlavor.STRING.TEXT_PLAIN;// .INPUT_STREAM.PDF;
-		System.out.println("hola hola 2 "+docF.toString());
-		Doc document = new SimpleDoc(inputStream, docF, null);		
-		
-		try {	
-			System.out.println("bytes: "+document.getStreamForBytes()+" &..& "+document.getPrintData());
-		} catch (IOException e1) {	e1.printStackTrace();	}
-		
-//		para establecer algunos atributos de la impresora
-		PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();	
-		
-//		localizar impresoras, con lookupdefaultprintservice usa la impresora predeterminada
-		PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
-		
-//		PrintService[] impresorasdisponible = PrintServiceLookup.lookupPrintServices(null, null);						
-//		for (PrintService ps: impresorasdisponible)		System.out.println(ps.getName());			
-		
-		if (defaultPrintService != null){		
-			DocPrintJob printJob = defaultPrintService.createPrintJob();
-		
-			try{	
-				printJob.print(document, attributeSet);		
-			}catch (Exception e){		
-				e.printStackTrace();
-			}
-		
-			try{	
-				inputStream.close();
-			}catch (IOException e){	
-				e.printStackTrace();
-			}
-		}
-	}	
+		PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
+		DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+		DocPrintJob docPrintJob = printService.createPrintJob(); 
+		Doc doc=new SimpleDoc(cadena.getBytes(),flavor,null);
+		System.out.println(" jujujujuju     "+docPrintJob.getPrintService()+"bytes:  "+cadena.getBytes());
+		try {
+			docPrintJob.print(doc, null);
+		}catch (PrintException e) {
+			System.out.println("Error al imprimir: "+e.getMessage());
+		} 
+		System.out.println("chaochaochao   "+cadena);
+	}
 	
 	private boolean validarInformacionCompleta(){
 		
@@ -626,6 +560,7 @@ public class EncomiendaController{
 	
 	@FXML
 	private void actionCalcularMonto() throws Exception{
+			ContextoEncomienda.getInstance().setBanderaBotonCalcularMonto(true);
 			lTotalipostel.setVisible(true);
 			try{						
 				Session sesion1 = openSesion();			
@@ -706,6 +641,12 @@ public class EncomiendaController{
 	
 	@FXML
 	private void actionRbCancelado(){
+		System.out.println("SELECCIONE CANCELADO-Dest: "+ContextoEncomienda.getInstance().getDestinatario().getApellido());
+		System.out.println("SELECCIONE CANCELADO-Remit: "+ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido());
+		
+		if (ContextoEncomienda.getInstance().getDestinatario().getApellido().compareTo("")!=0 && ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido().compareTo("")!=0)
+			limpiezaCambioTarifa();
+			
 		ContextoEncomienda.getInstance().setModoPago("cancelado");
 		rbFletedestino.setSelected(false);	
 		lTituloFactura2.setText(lNombreRemitente.getText());
@@ -713,9 +654,26 @@ public class EncomiendaController{
 		botonDestinatario.setDisable(false);botonDestinatario.setOpacity(1);
 	}
 	
+	private void limpiezaCambioTarifa(){
+		tfPeso.setText("");tfRecargo.setText("");tfSeguro.setText("");
+		lResulMonto.setText("");cbUnidadPeso.getSelectionModel().select(-1);
+		lTotalipostel.setText("");
+		if (ContextoEncomienda.getInstance().getBanderaBotonCalcularMonto()){
+			lTotalRecargo.setText("");lTotalSeguro.setText("");lSubTotal.setText("");
+			lTotalIVA.setText("");lTotalTotal.setText("");
+			System.out.println("mas trabajo de clean");			
+		}else if (!ContextoEncomienda.getInstance().getBanderaBotonCalcularMonto()){			
+			System.out.println("clean sencillo");
+		}
+	}
+	
 	@FXML
 	private void actionRbFleteDestino(){
-		ContextoEncomienda.getInstance().setModoPago("fletedestino");	
+		System.out.println("SELECCIONE FLETE DESTINO-Dest: "+ContextoEncomienda.getInstance().getDestinatario().getApellido());
+		System.out.println("SELECCIONE FLETE DESTINO-Remit: "+ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido());
+		ContextoEncomienda.getInstance().setModoPago("fletedestino");
+		if (ContextoEncomienda.getInstance().getDestinatario().getApellido().compareTo("")!=0 && ContextoEncomienda.getInstance().getRemitenteAbajo().getApellido().compareTo("")!=0)
+			limpiezaCambioTarifa();
 		rbCancelado.setSelected(false);				
 		lTituloFactura2.setText(lNombreDestinatario.getText());
 		botonRemitente.setDisable(false);botonRemitente.setOpacity(1);

@@ -142,6 +142,11 @@ public class Main extends Application {
 				propie.setProperty("hibernate.connection.username", "prueba");
 				propie.setProperty("hibernate.connection.password", "");
 			}
+			if (con == "web"){
+                propie.setProperty("hibernate.connection.url", "jdbc:mysql://ticven.com.ve/ticven_encomienda");
+                propie.setProperty("hibernate.connection.username", "ticven_prueba");
+                propie.setProperty("hibernate.connection.password", "Ticven01");
+			}
 			
 			propie.setProperty("hibernate.connection.pool_size","2");
 			propie.setProperty("hibernate.current_session_context_class","thread");
