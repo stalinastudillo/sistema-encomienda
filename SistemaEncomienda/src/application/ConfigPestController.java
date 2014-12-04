@@ -51,18 +51,32 @@ public class ConfigPestController {
 	@FXML	TabPane tabPane;	
 	@FXML	Tab tbUnidad;	
 	@FXML	Tab tbTarifa;	
-	@FXML	Tab tbPesp;	
+	@FXML	Tab tbPeso;	
 	@FXML	Tab tbVariable;
+	@FXML 	Tab tbCiudadDestino;
 		
 //	Pestaña Unidad
 	@FXML	TextField tfuUnidad;	
 	@FXML	TextField tfuFactor;
 	@FXML	Label luAlerta;
+	private ObservableList<Unidad> itemsUnidad = FXCollections.observableArrayList();
+	Query queryResultUnidadPestaña;
+	private int idBorrarU=0;
+	private Unidad obju = new Unidad();
+	@FXML	TableView<Unidad> tvpTablaU = new TableView<Unidad>();
+	@FXML	TableColumn<Unidad,String> tcpUnidadU;
+	@FXML	TableColumn<Unidad,String> tcpFactorU;
 //	Fin
 	
 //	Pestaña Tarifa
 	@FXML	TextField tftTarifa;
 	@FXML	Label ltAlerta;
+	private ObservableList<Tarifa> itemsTarifa = FXCollections.observableArrayList();
+	Query queryResultTarifaPestaña;
+	private int idBorrarT=0;
+	private Tarifa objt = new Tarifa();
+	@FXML	TableView<Tarifa> tvpTablaT = new TableView<Tarifa>();
+	@FXML	TableColumn<Tarifa,String> tcpDescripcionT;
 //	Fin
 	
 //	Pestaña Peso
@@ -87,16 +101,34 @@ public class ConfigPestController {
 //	Pestaña Variable
 	@FXML	TextField tfvVariable;
 	@FXML	Label lvAlerta;
+	@FXML	TableView<VariableConfiguracion> tvvTablaV = new TableView<VariableConfiguracion>();
+	@FXML	TableColumn<VariableConfiguracion,String> tcVNombreV;
+	ObservableList<VariableConfiguracion> itemsVariable = FXCollections.observableArrayList();
+	Query queryResultVariable;
+	private VariableConfiguracion objv = new VariableConfiguracion();
+	
 //	Fin	
 	
 //	Pestaña Ciudad Destino
 	@FXML	TextField tfcdCiudadDestino;
 	@FXML	Label lcdAlerta;
+	@FXML 	TableView tvpTablaCD;
+	@FXML 	TableColumn tcpCiudadDestinoCD;	
+	@FXML	Button bcdBorrar;
+	private ObservableList<CiudadDestino> itemsCiudadDestino = FXCollections.observableArrayList();
+	Query queryResultCiudadDestino;
+	private int idBorrarCD=0;
+	private CiudadDestino objcd = new CiudadDestino();
 //	Fin
 	
 //	Pestaña Tipo Embalaje
 	@FXML	TextField tfteTipoEmbalaje;
 	@FXML	Label lteAlerta;
+	@FXML 	TableView tvpTablaTE;
+	@FXML 	TableColumn tcpTipoEmbalajeTE;
+	Query 	queryResultTipoEmbalaje;
+	private TipoEmbalaje objte = new TipoEmbalaje();
+	private ObservableList<TipoEmbalaje> itemsTipoEmbalaje;
 //	Fin
 	
 //	Pestaña Asociar Tarifa/Peso
@@ -166,11 +198,19 @@ public class ConfigPestController {
 	private ObservableList<String> opcionTipoVariable = FXCollections.observableArrayList();	
 	boolean bandValorVariable = false, bandFechaVigencia = false, bandTipoVariable = false, bandTipoDato = false, bandPuntoDecimal = false;		
 	int posTipoVariable=0;	char [] v;
+	@FXML	TableView<DetalleVariableConfiguracion> tvdvTablaDV = new TableView<DetalleVariableConfiguracion>();	
+	@FXML	TableColumn<DetalleVariableConfiguracion,String> tcDVTipoValor;
+	@FXML	TableColumn<DetalleVariableConfiguracion,String> tcDVFechaVigencia;	
+	@FXML	TableColumn<DetalleVariableConfiguracion,String> tcDVValor;
+	@FXML	TableColumn<DetalleVariableConfiguracion,String> tcDVVariable;
+	Query queryResultDetalleVariable;
+	ObservableList<DetalleVariableConfiguracion> itemsDetalleVariable = FXCollections.observableArrayList();
+	private DetalleVariableConfiguracion objdv = new DetalleVariableConfiguracion();
 //	Fin
 	
 	@FXML
 	private void initialize(){
-		System.out.println("controlador de pestañas "+tabPane.getTabs().get(3).getText() );
+//		System.out.println("controlador de pestañas "+tabPane.getTabs().get(3).getText() );
 		tfuFactor.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.decimalValidacion(8));
 		tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>(){
 	       	@Override
@@ -186,7 +226,7 @@ public class ConfigPestController {
 					contenidoPeso();
 				}else if (arg2.getText().equals("Variable")){					
 					contenidoVariable();						
-				}else if (arg2.getText().equals("Cuidad Destino")){					
+				}else if (arg2.getText().equals("Ciudad Destino")){					
 					contenidoCiudadDestino();
 				}else if (arg2.getText().equals("Tipo Embalaje")){					
 					contenidoTipoEmbalaje();				
@@ -199,6 +239,7 @@ public class ConfigPestController {
 				}
 	       	}
 		});		
+		contenidoCiudadDestino();
 	}
 	
 	@FXML
@@ -225,7 +266,29 @@ public class ConfigPestController {
 		    	luAlerta.setVisible(false);
 		    }
 		});		
+		
+		tcpUnidadU.setCellValueFactory(new PropertyValueFactory<Unidad,String>("Descripcion"));
+		tcpFactorU.setCellValueFactory(new PropertyValueFactory<Unidad,String>("Factor"));
+		tvpTablaU.setColumnResizePolicy(tvpTablaU.UNCONSTRAINED_RESIZE_POLICY);	
+		Session sesion1 = openSesion();		
+		queryResultUnidadPestaña = sesion1.createQuery("from Unidad");
+		itemsUnidad = FXCollections.observableArrayList(queryResultUnidadPestaña.list()); 
+		tvpTablaU.setItems(itemsUnidad);
+		closeSesion(sesion1);
+		
+		tvpTablaU.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Unidad>(){
+			@Override
+			public void changed(ObservableValue<? extends Unidad> arg0, Unidad arg1, Unidad arg2) {
+				if (arg2 != null){
+					System.out.println("seleccione: "+arg2.getDescripcion()+"  "+arg2.getCodigo());
+					idBorrarCD=arg2.getCodigo();
+					tfuUnidad.setText(arg2.getDescripcion());
+					tfuFactor.setText(String.valueOf(arg2.getFactor()));
+				}
+			}
+		});
 	}
+	
 	@FXML
 	public void actionUnidadAceptar(){
 		System.out.println("boton aceptar unidad");
@@ -242,6 +305,28 @@ public class ConfigPestController {
 			luAlerta.setVisible(true);luAlerta.setText("Debe ingresar la informaciÃ³n solicitada");
 		}
 	}
+	
+	@FXML
+	public void actionUnidadBorrar(){
+		System.out.println("boton eliminar unidad");
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from Unidad where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD );
+			query.setMaxResults(1);			
+			obju = new Unidad();
+			obju = (Unidad) query.uniqueResult();
+			sesion1.delete(obju);	
+			lcdAlerta.setText("Registro eliminado exitosamente");lcdAlerta.setVisible(true);
+			tfuUnidad.setText("");		tfuFactor.setText("");
+			queryResultUnidadPestaña = sesion1.createQuery("from Unidad");
+			itemsUnidad = FXCollections.observableArrayList(queryResultUnidadPestaña.list()); 
+			tvpTablaU.setItems(itemsUnidad);
+			closeSesion(sesion1);			
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}		
+	}
 //	Fin Pestaña Unidad
 	
 //	Pestaña Tarifa
@@ -255,7 +340,27 @@ public class ConfigPestController {
 		    	ltAlerta.setVisible(false);
 		    }
 		});
+		
+		tcpDescripcionT.setCellValueFactory(new PropertyValueFactory<Tarifa,String>("Descripcion"));
+		tvpTablaT.setColumnResizePolicy(tvpTablaT.UNCONSTRAINED_RESIZE_POLICY);	
+		Session sesion1 = openSesion();		
+		queryResultTarifaPestaña = sesion1.createQuery("from Tarifa");
+		itemsTarifa = FXCollections.observableArrayList(queryResultTarifaPestaña.list()); 
+		tvpTablaT.setItems(itemsTarifa);
+		closeSesion(sesion1);
+		
+		tvpTablaT.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tarifa>(){
+			@Override
+			public void changed(ObservableValue<? extends Tarifa> arg0, Tarifa arg1, Tarifa arg2) {
+				if (arg2 != null){
+					System.out.println("seleccione: "+arg2.getDescripcion()+"  "+arg2.getCodigo());
+					idBorrarCD=arg2.getCodigo();
+					tftTarifa.setText(arg2.getDescripcion());
+				}
+			}
+		});
 	}	
+	
 	@FXML
 	public void actionTarifaAceptar(){
 		System.out.println("boton aceptar tarifa");
@@ -263,13 +368,39 @@ public class ConfigPestController {
 			Session sesion = openSesion();		
 			Tarifa objTarifa = new Tarifa();
 			objTarifa.setDescripcion(tftTarifa.getText());
-			sesion.save(objTarifa);
-			closeSesion(sesion);
+			sesion.save(objTarifa);			
 			tftTarifa.setText("");
 			ltAlerta.setVisible(true);ltAlerta.setText("Información ingresada exitosamente");
+			queryResultTarifaPestaña = sesion.createQuery("from Tarifa");
+			itemsTarifa = FXCollections.observableArrayList(queryResultTarifaPestaña.list()); 
+			tvpTablaT.setItems(itemsTarifa);
+			closeSesion(sesion);
 		}else{
-			ltAlerta.setVisible(true);ltAlerta.setText("Debe ingresar la informaciÃ³n solicitada");
+			ltAlerta.setVisible(true);ltAlerta.setText("Debe ingresar la información solicitada");
 		}
+	}
+	
+	@FXML
+	public void actionTarifaMenos(){
+		System.out.println("boton menos tarifa");
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from Tarifa where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD );
+			query.setMaxResults(1);			
+			objt = new Tarifa();
+			objt = (Tarifa) query.uniqueResult();
+			sesion1.delete(objt);	
+			lcdAlerta.setText("Registro eliminado exitosamente");lcdAlerta.setVisible(true);
+			tftTarifa.setText("");
+			queryResultTarifaPestaña  = sesion1.createQuery("from Tarifa");
+			itemsTarifa = FXCollections.observableArrayList(queryResultTarifaPestaña.list()); 
+			tvpTablaT.setItems(itemsTarifa);
+			closeSesion(sesion1);			
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}	
+		
 	}
 //	Fin Pestaña Tarifa	
 	
@@ -282,7 +413,26 @@ public class ConfigPestController {
 		    	lvAlerta.setVisible(false);
 		    }
 		});	
+		tcVNombreV.setCellValueFactory(new PropertyValueFactory<VariableConfiguracion,String>("Nombre"));
+		tvvTablaV.setColumnResizePolicy(tvvTablaV.UNCONSTRAINED_RESIZE_POLICY);	
+		Session sesion1 = openSesion();		
+		queryResultVariable = sesion1.createQuery("from VariableConfiguracion");
+		itemsVariable = FXCollections.observableArrayList(queryResultVariable.list()); 
+		tvvTablaV.setItems(itemsVariable);
+		closeSesion(sesion1);
+		
+		tvvTablaV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<VariableConfiguracion>(){
+			@Override
+			public void changed(ObservableValue<? extends VariableConfiguracion> arg0, VariableConfiguracion arg1, VariableConfiguracion arg2) {
+				if (arg2 != null){
+					System.out.println("ssssseleccioneeee: "+arg2.getNombre()+"  "+arg2.getCodigo());
+					idBorrarCD=arg2.getCodigo();
+					tfvVariable.setText(arg2.getNombre());
+				}
+			}
+		});	
 	}
+	
 	@FXML
 	public void actionVariableAceptar(){
 		System.out.println("boton aceptar variable");
@@ -308,22 +458,35 @@ public class ConfigPestController {
 				lvAlerta.setVisible(true);
 				System.out.println("si encontro algo con " + objvc.getNombre());		
 			}
-			
-//			Session sesion = openSesion();		
-//			Tarifa objTarifa = new Tarifa();
-//			objTarifa.setDescripcion(tftTarifa.getText());
-//			sesion.save(objTarifa);
-//			closeSesion(sesion);
-//			tftTarifa.setText("");
-//			lvAlerta.setVisible(true);lvAlerta.setText("Información ingresada exitosamente");
 		}else{
 			lvAlerta.setVisible(true);lvAlerta.setText("Debe ingresar la informaciÃ³n solicitada");
 		}
 	}
+
+	@FXML
+	public void actionVariableMenos(){
+		System.out.println("boton aceptar menos "+idBorrarCD);
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from VariableConfiguracion where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD );
+			query.setMaxResults(1);			
+			objv = new VariableConfiguracion();
+			objv = (VariableConfiguracion) query.uniqueResult();
+			sesion1.delete(objv);	
+			lcdAlerta.setText("Registro eliminado exitosamente");lcdAlerta.setVisible(true);
+			tfvVariable.setText("");
+			queryResultVariable = sesion1.createQuery("from VariableConfiguracion");
+			itemsVariable = FXCollections.observableArrayList(queryResultVariable.list()); 
+			tvvTablaV.setItems(itemsVariable);
+			closeSesion(sesion1);			
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}	
+	}
 //	Fin Pestaña Variable
 	
-//	Pestaña Ciudad Destino
-	
+//	Pestaña Ciudad Destino	
 	public void contenidoCiudadDestino(){
 		tfcdCiudadDestino.setText("");
 		tfcdCiudadDestino.textProperty().addListener(new ChangeListener<String>() {
@@ -332,7 +495,27 @@ public class ConfigPestController {
 		    	lcdAlerta.setVisible(false);
 		    }
 		});	
+		
+		tcpCiudadDestinoCD.setCellValueFactory(new PropertyValueFactory<CiudadDestino,String>("Descripcion"));
+		tvpTablaCD.setColumnResizePolicy(tvpTablaCD.UNCONSTRAINED_RESIZE_POLICY);	
+		Session sesion1 = openSesion();		
+		queryResultCiudadDestino = sesion1.createQuery("from CiudadDestino");
+		itemsCiudadDestino = FXCollections.observableArrayList(queryResultCiudadDestino.list()); 
+		tvpTablaCD.setItems(itemsCiudadDestino);
+		closeSesion(sesion1);
+		
+		tvpTablaCD.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<CiudadDestino>(){
+			@Override
+			public void changed(ObservableValue<? extends CiudadDestino> arg0, CiudadDestino arg1, CiudadDestino arg2) {
+				if (arg2 != null){
+					System.out.println("ssssseleccioneeee: "+arg2.getDescripcion()+"  "+arg2.getCodigo());
+					idBorrarCD=arg2.getCodigo();
+					tfcdCiudadDestino.setText(arg2.getDescripcion());
+				}
+			}
+		});	
 	}
+	
 	@FXML
 	public void actionCiudadDestinoAceptar(){
 		System.out.println("boton aceptar ciudad destino");
@@ -345,10 +528,33 @@ public class ConfigPestController {
 			closeSesion(sesion);
 			tfcdCiudadDestino.setText("");
 			lcdAlerta.setVisible(true);lcdAlerta.setText("Información ingresada exitosamente");
+			contenidoCiudadDestino();			
 		}else{
 			lcdAlerta.setVisible(true);lcdAlerta.setText("Debe ingresar la información solicitada");
 		}
 		tfcdCiudadDestino.setText("");
+	}
+	
+	@FXML
+	public void actionCiudadDestinoBorrar(){
+		System.out.println("boton eliminar ciudad destino "+idBorrarCD);
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from CiudadDestino where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD );
+			query.setMaxResults(1);			
+			objcd = new CiudadDestino();
+			objcd = (CiudadDestino) query.uniqueResult();
+			sesion1.delete(objcd);	
+			lcdAlerta.setText("Registro eliminado exitosamente");lcdAlerta.setVisible(true);
+			tfcdCiudadDestino.setText("");
+			queryResultCiudadDestino = sesion1.createQuery("from CiudadDestino");
+			itemsCiudadDestino = FXCollections.observableArrayList(queryResultCiudadDestino.list()); 
+			tvpTablaCD.setItems(itemsCiudadDestino);
+			closeSesion(sesion1);			
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}		
 	}
 //	Fin Pestaña Ciudad Destino
 	
@@ -361,7 +567,33 @@ public class ConfigPestController {
 		    	lteAlerta.setVisible(false);
 		    }
 		});
+		tcpTipoEmbalajeTE.setCellValueFactory(new PropertyValueFactory<TipoEmbalaje,String>("Nombre"));
+		tvpTablaTE.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TipoEmbalaje>(){
+			@Override
+			public void changed(ObservableValue<? extends TipoEmbalaje> arg0, TipoEmbalaje arg1, TipoEmbalaje arg2) {
+				if (arg2 != null){
+					System.out.println("ssssseleccioneeee: "+arg2.getNombre()+"  "+arg2.getCodigo());
+					idBorrarCD=arg2.getCodigo();
+					tfteTipoEmbalaje.setText(arg2.getNombre());
+				}
+			}
+		});	
+		tvpTablaTE.setColumnResizePolicy(tvpTablaTE.UNCONSTRAINED_RESIZE_POLICY);	
+		cargarTipoEmbalaje();
 	}	
+	
+	public void cargarTipoEmbalaje(){
+		System.out.println("* * * * * * * * * * * * ");
+		try{
+			Session sesion1 = openSesion();					
+			queryResultTipoEmbalaje = sesion1.createQuery("from TipoEmbalaje");
+			itemsTipoEmbalaje = FXCollections.observableArrayList(queryResultTipoEmbalaje.list()); 
+			System.out.println(itemsTipoEmbalaje.size()+"  //   "+itemsTipoEmbalaje);
+			tvpTablaTE.setItems(itemsTipoEmbalaje);
+			closeSesion(sesion1);
+		}catch(HibernateException e){	e.printStackTrace();	}
+	}
+	
 	@FXML
 	public void actionTipoEmbalajeAceptar(){
 		System.out.println("boton aceptar tipo embalaje");
@@ -373,10 +605,35 @@ public class ConfigPestController {
 			closeSesion(sesion);
 			tfcdCiudadDestino.setText("");
 			lteAlerta.setVisible(true);lteAlerta.setText("Información ingresada exitosamente");
+			tvpTablaTE.setItems(itemsTipoEmbalaje);cargarTipoEmbalaje();
 		}else{
 			lteAlerta.setVisible(true);lteAlerta.setText("Debe ingresar la información solicitada");
 		}
 	}
+	
+	@FXML
+	public void actionTipoEmbalajeBorrar(){
+		System.out.println("boton eliminar tipo embalaje"+idBorrarCD);
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from TipoEmbalaje where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD);
+			query.setMaxResults(1);
+			objte = new TipoEmbalaje();
+			objte = (TipoEmbalaje) query.uniqueResult();			
+			sesion1.delete(objte);	
+			lteAlerta.setText("Registro eliminado exitosamente");lteAlerta.setVisible(true);					
+			tfteTipoEmbalaje.setText("");
+			queryResultTipoEmbalaje = sesion1.createQuery("from TipoEmbalaje");
+			itemsTipoEmbalaje = FXCollections.observableArrayList(queryResultTipoEmbalaje.list()); 
+			tvpTablaTE.setItems(itemsTipoEmbalaje);
+			closeSesion(sesion1);
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}	
+	}
+//	Fin Pestaña Tipo Embalaje
+	
 //	Fin Pestaña Tipo Embalaje
 	
 //	Pestaña Asociar Tarifa/Peso	
@@ -420,8 +677,7 @@ public class ConfigPestController {
 			for (int r=0;r<TarifaList.size();r++){
 				MapTarifa.put(TarifaList.get(r).getDescripcion(),TarifaList.get(r).getCodigo());
 				opcionTarifa.add(TarifaList.get(r).getDescripcion());
-			}
-			
+			}			
 			cbatpTarifa.setItems(opcionTarifa);
 			closeSesion(sesion1);
 
@@ -1034,7 +1290,7 @@ public class ConfigPestController {
 //	Pestaña Detalle Variable
 	
 	public void contenidoDetalleVariable(){
-		bdvAceptar.setDisable(false);
+		
 		tfdvValorVariable.setText("");
 		
 		dpFechaVigencia = new DatePicker();		
@@ -1043,8 +1299,7 @@ public class ConfigPestController {
 		dpFechaVigencia.getCalendarView().setShowWeeks(false);
 		dpFechaVigencia.getStylesheets().add(getClass().getResource("DatePicker.css").toExternalForm());		
 		System.out.println("fecha seleccionada:  "+dpFechaVigencia.getSelectedDate());
-		gpdvFecha.add(dpFechaVigencia,0,0);
-				
+		gpdvFecha.add(dpFechaVigencia,0,0);				
 		
 //		DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
 //		simbolos.setDecimalSeparator('.');
@@ -1086,7 +1341,7 @@ public class ConfigPestController {
 				 ldvAlerta.setVisible(false);
 				 if (tfdvValorVariable.getText().equals("")){
 						 bandValorVariable=false;
-						 bdvAceptar.setDisable(true);	
+//						 bdvAceptar.setDisable(true);	
 						 bandPuntoDecimal=false;
 						 v = null;
 				 }else{
@@ -1147,25 +1402,38 @@ public class ConfigPestController {
 				asignarTipoPorcentaje();
 				System.out.println("undi porcentaje");
 			}
-	
-//		gpdvFecha.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//		    @Override
-//		    public void handle(MouseEvent mouseEvent) {
-//		        EventTarget target = mouseEvent.getTarget();
-//		        lastY = mouseEvent.getSceneY();
-//		    	System.out.println("imprimi en click de fecha a a a a a");
-//		    }
-//		});
 		
-//		gpdvFecha.getChildren().get(0).setOnDragEntered(new EventHandler<DragEvent>(){
-//            @Override
-//            public void handle(DragEvent t) {
-//                myGridPane.getChildren().get(ci).setStyle("-fx-background-color:yellow;");   
-//            }                
-//        });
+		tcDVTipoValor.setCellValueFactory(new PropertyValueFactory<DetalleVariableConfiguracion,String>("TipoValor"));
+		tcDVFechaVigencia.setCellValueFactory(new PropertyValueFactory<DetalleVariableConfiguracion,String>("FechaVigencia"));
+		tcDVValor.setCellValueFactory(new PropertyValueFactory<DetalleVariableConfiguracion,String>("Valor"));		
+		tcDVVariable.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<DetalleVariableConfiguracion, String>, ObservableValue<String>>(){
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<DetalleVariableConfiguracion, String> arg0) {
+				return new SimpleStringProperty(""+arg0.getValue().getObjVariable().getNombre());
+			}			
+		});	
+			
+		tvdvTablaDV.setColumnResizePolicy(tvdvTablaDV.UNCONSTRAINED_RESIZE_POLICY);	
+		Session sesion1 = openSesion();		
+		queryResultDetalleVariable = sesion1.createQuery("from DetalleVariableConfiguracion");
+		itemsDetalleVariable = FXCollections.observableArrayList(queryResultDetalleVariable.list()); 
+		tvdvTablaDV.setItems(itemsDetalleVariable);
+		closeSesion(sesion1);
+		
+		tvdvTablaDV.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<DetalleVariableConfiguracion>(){
+			@Override
+			public void changed(ObservableValue<? extends DetalleVariableConfiguracion> arg0, DetalleVariableConfiguracion arg1, DetalleVariableConfiguracion arg2) {
+				if (arg2 != null){
+					System.out.println("ssssseleccioneeee: "+arg2.getFechaVigencia()+"  "+arg2.getCodigo()+" "+arg2.getValor());
+					idBorrarCD=arg2.getCodigo();
+					tfdvValorVariable.setText(String.valueOf(arg2.getValor()));
+				}
+			}
+		});	
 	}	
+	
 	@FXML
-	private void botondvActionAceptar(){
+	private void actionDetalleVariableAceptar(){
 		ldvAlerta.setVisible(false);	
 		Calendar c = Calendar.getInstance();
 		c.setTime(this.dpFechaVigencia.getSelectedDate());
@@ -1179,26 +1447,58 @@ public class ConfigPestController {
 			
 			if (cbdvTipoValor.getSelectionModel().getSelectedIndex() == 0){
 				obj.setValor(Double.parseDouble(tfdvValorVariable.getText()));
+				System.out.println("uno uno//uno  ");
 			}else if (cbdvTipoValor.getSelectionModel().getSelectedIndex() == 1){
 				if (Double.parseDouble(tfdvValorVariable.getText())>0 && Double.parseDouble(tfdvValorVariable.getText())<=100)
-					obj.setValor(Double.parseDouble(tfdvValorVariable.getText()));				
+					obj.setValor(Double.parseDouble(tfdvValorVariable.getText()));	
+				else{
+					ldvAlerta.setVisible(true);ldvAlerta.setText("Debe ingresar un valor entre 0 y 100");}
+				System.out.println("uno uno//dos  ");
 			}			
 			
-			obj.setObjVariable(TipoVariableList.get(posTipoVariable));
-				
-			sesion2.save(obj);			
+			obj.setObjVariable(TipoVariableList.get(posTipoVariable));				
+			sesion2.save(obj);		
+			
+			queryResultDetalleVariable = sesion2.createQuery("from DetalleVariableConfiguracion");
+			itemsDetalleVariable = FXCollections.observableArrayList(queryResultDetalleVariable.list()); 
+			tvdvTablaDV.setItems(itemsDetalleVariable);
 			closeSesion(sesion2);
 		}catch(HibernateException e){
 			e.printStackTrace();
-		}			
-		tfdvValorVariable.setText("");
+		}
 	}	
+	
+	@FXML
+	private void actionDetalleVariableMenos(){
+		System.out.println("Boton menos detalle variable");
+		try{
+			Session sesion1 = openSesion();	
+			Query query = sesion1.createQuery("from DetalleVariableConfiguracion where Codigo = :codt");
+			query.setInteger("codt", idBorrarCD );
+			query.setMaxResults(1);			
+			objdv = new DetalleVariableConfiguracion();
+			objdv = (DetalleVariableConfiguracion) query.uniqueResult();
+			sesion1.delete(objdv);	
+			lcdAlerta.setText("Registro eliminado exitosamente");lcdAlerta.setVisible(true);
+			tfdvValorVariable.setText("");
+			cbdvTipoValor.getSelectionModel().select(-1);
+			cbdvTipoVariable.getSelectionModel().select(-1);
+			queryResultVariable = sesion1.createQuery("from DetalleVariableConfiguracion");
+			itemsVariable = FXCollections.observableArrayList(queryResultVariable.list()); 
+			tvvTablaV.setItems(itemsVariable);
+			closeSesion(sesion1);			
+		}catch(HibernateException e){
+			e.printStackTrace();
+		}	
+	}
+	
 	private void asignarTipoPorcentaje(){
 		tfdvValorVariable.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.porcentajeValidacion());
 	}
 	private void asignarTipoMonto(){
 		tfdvValorVariable.addEventHandler(javafx.scene.input.KeyEvent.KEY_TYPED, libreria.telefonoValidacion(10));
 	}	
+	
 //	Fin
 	
 	private Session openSesion(){		
@@ -1210,24 +1510,4 @@ public class ConfigPestController {
 	}
 }
 
-//gpdvFecha.setOnAction(new EventHandler(){
-//@Override
-//public void handle(Event arg0) {
-//	lAlerta.setVisible(false);
-//	System.out.println("texto en fechaaaa  "+dpFechaVigencia.getValue());
-//	
-//	if (dpFechaVigencia.getValue()!=null)
-//		bandFechaVigencia=true;
-//	else
-//		bandFechaVigencia=false;
-//	
-//	if (bandFechaVigencia && bandTipoVariable && bandTipoDato){				
-//		 tfValorVariable.setDisable(false);
-//		 tfValorVariable.setOpacity(1);
-//	}else{
-//		 tfValorVariable.setDisable(true);
-//		 tfValorVariable.setOpacity(0.5);
-//	}	
-//	System.out.println("* * * "+bandFechaVigencia + " * * * "+bandTipoVariable+" * * * "+ bandTipoDato);
-//}
-//});
+
