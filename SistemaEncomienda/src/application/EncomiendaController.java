@@ -253,9 +253,9 @@ public class EncomiendaController{
 	
 	@FXML
 	private void initialize(){	
-		System.out.println("imprimir antes");
-		comandoimprimir();
-		System.out.println("imprimir despues");
+//		System.out.println("imprimir antes");
+//		comandoimprimir();
+//		System.out.println("imprimir despues");
 		
 			tfPeso.focusedProperty().addListener(new ChangeListener<Boolean>(){
 			    @Override
